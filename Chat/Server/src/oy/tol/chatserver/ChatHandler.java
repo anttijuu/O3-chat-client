@@ -24,8 +24,15 @@ public class ChatHandler implements HttpHandler {
 		
 		if (exchange.getRequestMethod().equalsIgnoreCase("POST")) {
 			Headers headers = exchange.getRequestHeaders();
+			int contentLength = 0;
+			String contentType = "";
 			if (headers.containsKey("Content-Length")) {
-				int contentLength = Integer.parseInt(headers.get("Content-Length").get(0));
+				contentLength = Integer.parseInt(headers.get("Content-Length").get(0));
+			}
+			if (headers.containsKey("Content-Type")) {
+				contentType = headers.get("Content-Type").get(0);
+			}
+			if (contentType.equalsIgnoreCase("text/plain")) {
 				InputStream stream = exchange.getRequestBody();
 				String text = new BufferedReader(new InputStreamReader(stream, StandardCharsets.UTF_8))
 					        .lines()
@@ -33,11 +40,14 @@ public class ChatHandler implements HttpHandler {
 				stream.close();
 				if (text.length() > 0) {
 					messages.add(text);
+				} else {
+					code = 400;
+					messageBody = "No content in request";
 				}
 				exchange.sendResponseHeaders(code, -1);
 			} else {
 				code = 411;
-				messageBody = "Content-Length required.";
+				messageBody = "Content-Type must be text/plain.";
 			}
 		} else if (exchange.getRequestMethod().equalsIgnoreCase("GET")) {
 			for (String message : messages) {
@@ -53,11 +63,11 @@ public class ChatHandler implements HttpHandler {
 			messageBody = "Not supported.";
 		}
 		if (code != 200) {
-			exchange.sendResponseHeaders(code, messageBody.length());
+			byte [] bytes = messageBody.getBytes("UTF-8");
+			exchange.sendResponseHeaders(code, bytes.length);
 			OutputStream os = exchange.getResponseBody();
-			os.write(messageBody.getBytes());
+			os.write(bytes);
 			os.close();
 		}
 	}
-
 }
