@@ -15,8 +15,12 @@ public class ChatAuthenticator extends BasicAuthenticator {
 		users.put("dummy", "passwd");
 	}
 	
-	public void addUser(String userName, String password) {
-		users.put(userName, password);
+	public boolean addUser(String username, String password) {
+		if (!users.containsKey(username)) {
+			users.put(username, password);
+			return true;
+		}
+		return false;
 	}
 
 	@Override

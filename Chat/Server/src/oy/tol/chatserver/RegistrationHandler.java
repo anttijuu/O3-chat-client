@@ -44,7 +44,12 @@ public class RegistrationHandler implements HttpHandler {
 				if (text.length() > 0) {
 					String [] items = text.split(":");
 					if (items.length == 2) {
-						authenticator.addUser(items[0], items[1]);
+						if (!authenticator.addUser(items[0], items[1])) {
+							code = 403;
+							messageBody = "User already registered";
+						} else {
+							exchange.sendResponseHeaders(code, -1);
+						}
 					} else {
 						code = 400;
 						messageBody = "No valid user:passwd combination in request body";
@@ -53,7 +58,6 @@ public class RegistrationHandler implements HttpHandler {
 					code = 400;
 					messageBody = "No content in request";
 				}
-				exchange.sendResponseHeaders(code, -1);
 			} else {
 				code = 411;
 				messageBody = "Content-Type must be text/plain.";
@@ -69,7 +73,5 @@ public class RegistrationHandler implements HttpHandler {
 			os.write(bytes);
 			os.close();
 		}
-
 	}
-
 }
