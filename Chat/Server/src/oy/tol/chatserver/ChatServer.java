@@ -16,12 +16,14 @@ import javax.net.ssl.SSLContext;
 import javax.net.ssl.SSLParameters;
 import javax.net.ssl.TrustManagerFactory;
 
+import com.sun.net.httpserver.HttpContext;
+import com.sun.net.httpserver.HttpHandler;
 import com.sun.net.httpserver.HttpsConfigurator;
 import com.sun.net.httpserver.HttpsParameters;
 import com.sun.net.httpserver.HttpsServer;
 
 public class ChatServer {
-
+	
 	public static void main(String[] args) throws Exception {
 		try {
 			HttpsServer server = HttpsServer.create(new InetSocketAddress(8001), 0);
@@ -41,7 +43,9 @@ public class ChatServer {
 		        // eg. if app has a UI and parameters supplied by a user.
 		        }
 		    });
-			server.createContext("/chat", new ChatHandler());
+			ChatAuthenticator authenticator = new ChatAuthenticator();
+			HttpContext chatContext = server.createContext("/chat", new ChatHandler());
+			chatContext.setAuthenticator(authenticator);
 			server.setExecutor(null);
 			server.start();
 		} catch (Exception e) {
