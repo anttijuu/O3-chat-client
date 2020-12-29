@@ -6,16 +6,19 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.nio.charset.StandardCharsets;
-import java.util.ArrayList;
 import java.util.stream.Collectors;
 
 import com.sun.net.httpserver.Headers;
 import com.sun.net.httpserver.HttpExchange;
 import com.sun.net.httpserver.HttpHandler;
 
-public class ChatHandler implements HttpHandler {
+public class RegistrationHandler implements HttpHandler {
 
-	private ArrayList<String> messages = new ArrayList<String>();
+	private ChatAuthenticator authenticator = null;
+	
+	RegistrationHandler(ChatAuthenticator authenticator) {
+		this.authenticator = authenticator;
+	}
 	
 	@Override
 	public void handle(HttpExchange exchange) throws IOException {
@@ -39,25 +42,22 @@ public class ChatHandler implements HttpHandler {
 					        .collect(Collectors.joining("\n"));
 				stream.close();
 				if (text.length() > 0) {
-					messages.add(text);
-					exchange.sendResponseHeaders(code, -1);
+					String [] items = text.split(":");
+					if (items.length == 2) {
+						authenticator.addUser(items[0], items[1]);
+					} else {
+						code = 400;
+						messageBody = "No valid user:passwd combination in request body";
+					}
 				} else {
 					code = 400;
 					messageBody = "No content in request";
 				}
+				exchange.sendResponseHeaders(code, -1);
 			} else {
 				code = 411;
 				messageBody = "Content-Type must be text/plain.";
 			}
-		} else if (exchange.getRequestMethod().equalsIgnoreCase("GET")) {
-			for (String message : messages) {
-				messageBody += message + "\n";
-			}
-			byte [] bytes = messageBody.getBytes("UTF-8");
-			exchange.sendResponseHeaders(code, bytes.length);
-			OutputStream os = exchange.getResponseBody();
-			os.write(bytes);
-			os.close();
 		} else {
 			code = 400;
 			messageBody = "Not supported.";
@@ -69,5 +69,7 @@ public class ChatHandler implements HttpHandler {
 			os.write(bytes);
 			os.close();
 		}
+
 	}
+
 }

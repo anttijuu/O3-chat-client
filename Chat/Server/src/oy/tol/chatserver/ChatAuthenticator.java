@@ -16,7 +16,7 @@ public class ChatAuthenticator extends BasicAuthenticator {
 	}
 	
 	public void addUser(String userName, String password) {
-		// TODO implement this.
+		users.put(userName, password);
 	}
 
 	@Override

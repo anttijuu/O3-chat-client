@@ -46,6 +46,7 @@ public class ChatServer {
 			ChatAuthenticator authenticator = new ChatAuthenticator();
 			HttpContext chatContext = server.createContext("/chat", new ChatHandler());
 			chatContext.setAuthenticator(authenticator);
+			server.createContext("/registration", new RegistrationHandler(authenticator));
 			server.setExecutor(null);
 			server.start();
 		} catch (Exception e) {
