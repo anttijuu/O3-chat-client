@@ -10,6 +10,7 @@ import java.security.KeyStoreException;
 import java.security.NoSuchAlgorithmException;
 import java.security.UnrecoverableKeyException;
 import java.security.cert.CertificateException;
+import java.sql.SQLException;
 
 import javax.net.ssl.KeyManagerFactory;
 import javax.net.ssl.SSLContext;
@@ -26,6 +27,8 @@ public class ChatServer {
 	
 	public static void main(String[] args) throws Exception {
 		try {
+			ChatDatabase database = ChatDatabase.instance();
+			database.init("/Users/juustila/workspace/O3/Chat/Server/O3-chat.db");
 			HttpsServer server = HttpsServer.create(new InetSocketAddress(8001), 0);
 			SSLContext sslContext = chatServerSSLContext();
 			server.setHttpsConfigurator (new HttpsConfigurator(sslContext) {
@@ -49,6 +52,8 @@ public class ChatServer {
 			server.createContext("/registration", new RegistrationHandler(authenticator));
 			server.setExecutor(null);
 			server.start();
+		} catch (SQLException e) {
+			e.printStackTrace();
 		} catch (Exception e) {
 			e.printStackTrace();
 		}

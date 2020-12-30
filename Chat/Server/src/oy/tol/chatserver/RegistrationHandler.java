@@ -48,6 +48,8 @@ public class RegistrationHandler implements HttpHandler {
 							code = 403;
 							messageBody = "User already registered";
 						} else {
+							// Success
+							ChatDatabase.instance().addUser(items[0], items[1]);
 							exchange.sendResponseHeaders(code, -1);
 						}
 					} else {
