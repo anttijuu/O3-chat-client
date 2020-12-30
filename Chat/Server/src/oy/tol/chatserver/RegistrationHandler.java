@@ -49,7 +49,6 @@ public class RegistrationHandler implements HttpHandler {
 							messageBody = "User already registered";
 						} else {
 							// Success
-							ChatDatabase.instance().addUser(items[0], items[1]);
 							exchange.sendResponseHeaders(code, -1);
 						}
 					} else {
@@ -68,7 +67,7 @@ public class RegistrationHandler implements HttpHandler {
 			code = 400;
 			messageBody = "Not supported.";
 		}
-		if (code != 200) {
+		if (code < 200 || code > 299) {
 			byte [] bytes = messageBody.getBytes("UTF-8");
 			exchange.sendResponseHeaders(code, bytes.length);
 			OutputStream os = exchange.getResponseBody();

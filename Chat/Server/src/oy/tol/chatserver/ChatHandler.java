@@ -62,7 +62,7 @@ public class ChatHandler implements HttpHandler {
 			code = 400;
 			messageBody = "Not supported.";
 		}
-		if (code != 200) {
+		if (code < 200 || code > 299) {
 			byte [] bytes = messageBody.getBytes("UTF-8");
 			exchange.sendResponseHeaders(code, bytes.length);
 			OutputStream os = exchange.getResponseBody();

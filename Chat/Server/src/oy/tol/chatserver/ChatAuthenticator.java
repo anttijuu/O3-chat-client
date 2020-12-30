@@ -7,29 +7,18 @@ import com.sun.net.httpserver.BasicAuthenticator;
 
 public class ChatAuthenticator extends BasicAuthenticator {
 
-	private Map<String,String> users = null;
+	// TODO: It might be good for performance to cache users to the Map as did earlier.
 	
 	ChatAuthenticator() {
 		super("chat");
-		users = new Hashtable<String,String>();
-		users.put("dummy", "passwd");
 	}
 	
 	public boolean addUser(String username, String password) {
-		if (!users.containsKey(username)) {
-			users.put(username, password);
-			return true;
-		}
-		return false;
+		return ChatDatabase.instance().addUser(username, password);
 	}
 
 	@Override
 	public boolean checkCredentials(String username, String password) {
-		if (users.containsKey(username)) {
-			if (users.get(username).equals(password)) {
-				return true;
-			}
-		}
-		return false;
+		return ChatDatabase.instance().isUserRegistered(username, password);
 	}
 }
