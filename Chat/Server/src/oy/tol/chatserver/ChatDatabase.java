@@ -22,8 +22,7 @@ public class ChatDatabase {
 	private ChatDatabase() {	
 	}
 
-	public boolean init(String dbName) throws SQLException {
-		boolean result = false;
+	public void open(String dbName) throws SQLException {
 		boolean createDatabase = false;
 		File file = new File(dbName);
 		if (!file.exists() && !file.isDirectory()) {
@@ -34,17 +33,16 @@ public class ChatDatabase {
 		if (createDatabase) {
 			initializeDatabase();
 		}
-		result = true;
-		return result;
 	}
 
-	public void deinit() throws SQLException {
+	public void close() throws SQLException {
 		if (null != connection) {
 			connection.close();
 		}
 	}
 
 	public boolean addUser(String username, String password) {
+		// TODO. First check if username exists, then add.
 		boolean result = false;
 		if (null != connection) {
 			try {

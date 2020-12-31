@@ -7,4 +7,5 @@
  */
 module oy.tol.chatserver {
 	requires jdk.httpserver;
+	requires java.sql;
 }

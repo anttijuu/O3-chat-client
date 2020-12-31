@@ -28,7 +28,7 @@ public class ChatServer {
 	public static void main(String[] args) throws Exception {
 		try {
 			ChatDatabase database = ChatDatabase.instance();
-			database.init("/Users/juustila/workspace/O3/Chat/Server/O3-chat.db");
+			database.open("/Users/juustila/workspace/O3/Chat/Server/O3-chat.db");
 			HttpsServer server = HttpsServer.create(new InetSocketAddress(8001), 0);
 			SSLContext sslContext = chatServerSSLContext();
 			server.setHttpsConfigurator (new HttpsConfigurator(sslContext) {
