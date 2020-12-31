@@ -1,0 +1,2 @@
+module oy.tol.chatclient {
+}
