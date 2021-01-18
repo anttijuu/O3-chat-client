@@ -103,7 +103,16 @@ If the launch fails due not having the main class of the project in classpath, t
 Note that the client fails to send and receive data if the server certificate has not
 been saved to the target directory as `localhost.cer`, following the course instructions in Excercise 3.
 
-For commands available in the client, enter `/help` in the client.
+For commands available in the client, enter `/help` in the client. The usual process is:
+
+1. First, `/register` the user with the server if not already registered. Unregistered users cannot send or get chats.
+1. If user is already registered, `/login` with the registered user credentials.
+1. Post new chat messages by writing the message to the console and pressing enter.
+1. Get the latest messages from the server with command `/get`.
+1. If the server seems to be working OK, enable automatically fetching new messages, once every second, using command `/auto`.
+1. Exit the client app using the command `/exit`.
+
+You can also open two or more terminal windows to chat from several different user accounts at the same time.
 
 Test your server functionality with the client. In case you doubt the results, you can also use curl for
 testing, following the course instructions.
