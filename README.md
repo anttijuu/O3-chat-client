@@ -25,7 +25,7 @@ see the server API document at the course Moodle workspace.
 The content of the HTTPS requests and responses are JSON. The JSON library to use is
 included in the Maven `pom.xml` file included in the project.
 
-The client assumes the server has a self-signed certificate created using the name "localhost".
+The client assumes the server has a self signed certificate created using the name "localhost".
 For details, see the course Exercise 3 instructions for the phase where HTTPS support is added
 to the server.
 
@@ -47,6 +47,10 @@ You need the following to build and run the client:
 The client app is structured as described in this high level UML class diagram:
 
 ![Client class diagram](O3-chat-client-classes.png)
+
+* `ChatClient` is the command line UI for the app, running the show.
+* `ChatHttpClient` is used by the `ChatClient` to do the actual requests to the remote ChatServer.
+* `ChatMessage`s are sent to and received from the server.
 
 Note that not all details are visible in this diagram.
 
