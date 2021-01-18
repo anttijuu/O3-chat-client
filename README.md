@@ -8,7 +8,7 @@ The client works with a server that has the following things implemented:
 
 * HTTPS support with self-signed certificate.
 * Basic HTTP Authentication support.
-* /registration and /chat paths implemented.
+* `/registration` and `/chat` paths implemented.
 * HTTP request and responses are in JSON.
 
 That is, after *Exercise 3* has been finished successfully. You may test your
@@ -32,7 +32,7 @@ to the server.
 You must install the certificate to the directory where you run the client, as `localhost.cer` file.
 That client certificate is then loaded in memory in `ChatHttpClient.createTrustingConnectionDebug`.
 
-Note that you should not run real servers with self-signed certificates publicly, this is just for development
+**Note** that you *should not* run real servers with self-signed certificates publicly, this is just for development
 and learning purposes. Get a real certificate when deploying servers in the open and for real.
 
 ## Dependencies
@@ -43,6 +43,12 @@ You need the following to build and run the client:
 * Maven
 * JSON library (see details from `pom.xml`)
 * An IDE if you wish to view and/or edit the code.
+
+The client app is structured as described in this high level UML class diagram:
+
+![Client class diagram](O3-chat-client-classes.png)
+
+Note that not all details are visible in this diagram.
 
 ## Building the client
 
@@ -62,7 +68,7 @@ from the command line.
 ## Preparing the client
 
 Since we are using a self signed certificate, you need to get the server's certificate to the client
-to allow it to use non-secure certificates. Make sure the server has already been configured to
+to allow it to use non secure certificates. Make sure the server has already been configured to
 use a self signed certificate you created, following the Exercise 3 instructions. Then:
 
 1. Run the server

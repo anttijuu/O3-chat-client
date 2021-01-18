@@ -1,0 +1,31 @@
+@startuml
+package oy.tol.chatclient {
+  interface ChatClientDataProvider
+  class ChatClient
+  class ChatHttpClient
+  class ChatMessage {
+    LocalDateTime sent
+    String nick
+    String message
+  }
+}
+package javax.net.ssl {
+  class HttpsURLConnection
+}
+package org.json {
+  class JSONObject
+  class JSONArray
+}
+ChatClient : main()
+ChatClientDataProvider <|.. ChatClient
+ChatClient *-- ChatHttpClient
+ChatHttpClient ..> ChatClientDataProvider
+ChatHttpClient --> HttpsURLConnection
+ChatHttpClient --> JSONObject
+ChatHttpClient --> JSONArray
+ChatHttpClient ..> ChatMessage
+ChatClient ..> ChatMessage
+note "Communicates with ChatServer" as N1
+N1 .. ChatHttpClient
+@enduml
+
