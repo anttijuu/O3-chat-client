@@ -31,6 +31,7 @@ to the server.
 
 You must install the certificate to the directory where you run the client, as `localhost.cer` file.
 That client certificate is then loaded in memory in `ChatHttpClient.createTrustingConnectionDebug`.
+How to do this is explained below in *Preparing the client* section.
 
 **Note** that you *should not* run real servers with self-signed certificates publicly, this is just for development
 and learning purposes. Get a real certificate when deploying servers in the open and for real.
@@ -76,11 +77,13 @@ to allow it to use non secure certificates. Make sure the server has already bee
 use a self signed certificate you created, following the Exercise 3 instructions. Then:
 
 1. Run the server
-1. Using your web browser, access the server at `https://localhost:8001/chat`, assuming the defaults were used.
+1. Using your web browser, access the server at `https://localhost:8001/chat`, assuming the defaults were used in implementation.
 1. You will get a warning about non secure certificate.
-1. View the certificate, either from the warning or by clicking the browser's lock symbol to view the site certificate.
-1. When viewing the certificate, you can save it to the local computer. How this happens depends on the browser, so google that.
-1. Save the certificate as `locahost.cer` to the *client* app `target` directory.
+1. View the certificate (see link below for browser specific info), either from the warning or by clicking the browser's lock symbol to view the site certificate.
+1. When viewing the certificate, you then save it to the local computer. How this happens depends on the browser, so see the link below.
+1. Save the certificate as `locahost.cer` to the *client* app `target` directory. Client assumes the certification file to be there.
+
+For browser specific instructions on how to do this, check out [this link](https://www.shellhacks.com/get-ssl-certificate-from-server-site-url-export-download/).
 
 ## Running the client
 

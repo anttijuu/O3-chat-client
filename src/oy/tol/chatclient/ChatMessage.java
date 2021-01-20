@@ -6,6 +6,7 @@ import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
 import java.time.temporal.ChronoUnit;
 
+import org.json.JSONException;
 import org.json.JSONObject;
 
 public class ChatMessage {
@@ -24,7 +25,7 @@ public class ChatMessage {
 	public static final String ANSI_CYAN = "\u001B[36m";
 	public static final String ANSI_WHITE = "\u001B[37m";
 
-	static public ChatMessage from(JSONObject jsonObject) {
+	static public ChatMessage from(JSONObject jsonObject) throws JSONException {
 		ChatMessage message = new ChatMessage();
 		message.nick = jsonObject.getString("user");
 		String dateStr = jsonObject.getString("sent");

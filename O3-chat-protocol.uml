@@ -14,19 +14,20 @@ ChatClient -> User : ask login info
 User -> ChatClient : done
 ChatClient -> ChatServer : GET /chat
 note right: Login credentials passed in Authorization header 
-ChatServer -> ChatClient : 200 OK, with response body JSON
+ChatServer -> ChatClient : 200 OK, JSON in response body
 ChatClient -> ChatClient : parse JSON
 note right: Last-Modified header datetime saved in client.
 ChatClient -> User : here are the messages
 User -> ChatClient : enters a message
-ChatClient -> ChatServer : POST /chat
+ChatClient -> ChatClient : converts to JSON
+ChatClient -> ChatServer : POST /chat, JSON in request body
 ChatServer -> ChatClient : 200 OK
 ChatClient -> ChatServer : GET /chat
 note right
   If-Modified-Since tells the server from which
-  datetime to deliver chats from.
+  datetime to deliver chats from to this client.
 end note
-ChatServer -> ChatClient : 200 OK, with response body JSON
+ChatServer -> ChatClient : 200 OK, JSON in response body
 ChatClient -> ChatClient : parse JSON
 note right: Last-Modified header datetime saved in client.
 ChatClient -> User : here are the messages
