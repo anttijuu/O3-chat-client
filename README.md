@@ -121,12 +121,16 @@ For commands available in the client, enter `/help` in the client. The usual pro
 1. Post new chat messages by writing the message to the console and pressing enter.
 1. Get the latest messages from the server with command `/get`.
 1. If the server seems to be working OK, enable automatically fetching new messages, once every second, using command `/auto`.
+1. Open additional terminals and run the client there, login with different user account and chat with "the other person".
 1. Exit the client app using the command `/exit`.
-
-You can also open two or more terminal windows to chat from several different user accounts at the same time.
 
 Test your server functionality with the client. In case you doubt the results, you can also use curl for
 testing, following the course instructions.
+
+If the server works with the client, your server should fulfill the requirements of the course.
+
+Note that the current version does not yet implement the `/test` command. When it does, you can
+use that to test the server with valid/invalid requests to see if your server is robust enough.
 
 ## Information
 
