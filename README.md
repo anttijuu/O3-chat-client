@@ -52,8 +52,9 @@ The client app is structured as described in this high level UML class diagram:
 * `ChatClient` is the command line UI for the app, running the show.
 * `ChatHttpClient` is used by the `ChatClient` to do the actual requests to the remote ChatServer.
 * `ChatMessage`s are sent to and received from the server.
+* `ChatHttpClient` does not "know" ChatClient, but accesses it using the interface class `ChatClientDataProvider`. When the http client wants the user settings (username, password, etc.), it asks these from the client using this interface the `ChatClient` implements.
 
-Note that not all details are visible in this diagram.
+Note that not all details of the implementation are visible in this diagram.
 
 ## Building the client
 
