@@ -70,6 +70,10 @@ You can also build and run the client from an IDE, e.g. Visual Studio Code or Ec
 The console UI in Eclipse may not work if debugging within Eclipse. In that case run the client
 from the command line.
 
+Windows Command prompt does not by default support UTF-8, so any special chars may end up not transferring
+properly. Prefer using VS Code terminal which does support UTF-8, or use a proper terminal
+app such as Terminus (Win/Linux/macOS) or iTerm (macOS).
+
 ## Preparing the client
 
 Since we are using a self signed certificate, you need to get the server's certificate to the client
@@ -96,6 +100,8 @@ error message.
 The default server address is `https://localhost:8001/`. You can change it from the code, or from the
 app when it is running using the command `/server`.
 
+You can launch the client either from VS Code run/debug menu or from the terminal:
+
 1. `cd target`
 1. `java -jar <the-jar-file-with-dependencies-here.jar>`
 
@@ -104,7 +110,8 @@ If the launch fails due not having the main class of the project in classpath, t
 `java -cp <the-jar-file> oy.tol.chatclient.ChatClient`
 
 Note that the client fails to send and receive data if the server certificate has not
-been saved to the target directory as `localhost.cer`, following the course instructions in Excercise 3.
+been saved to the target directory as `localhost.cer`, following the instructions above
+in section Preparing the client.
 
 For commands available in the client, enter `/help` in the client. The usual process is:
 
