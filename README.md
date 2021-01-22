@@ -108,13 +108,19 @@ You *have* to give the two parameters to the client as described below.
 
 You can launch the client either from from the terminal (parameters are explained below):
 
-1. `cd target`
-1. `java -jar <the-jar-file-with-dependencies-here.jar> 2 C:\path\to\localhost.cer`
+```bash
+java -jar target\ChatClient-0.0.1-SNAPSHOT-jar-with-dependencies.jar 2 C:\path\to\localhost.cer
+```
+
+If the cer file is on the root directory of the project, just give the file name without a path.
 
 or in *nix machines:
 
-1. `cd target`
-1. `java -jar ChatClient-0.0.1-SNAPSHOT-jar-with-dependencies.jar 2 /path/to/localhost.cer`
+```bash
+java -jar target/ChatClient-0.0.1-SNAPSHOT-jar-with-dependencies.jar 2 C:\path\to\localhost.cer
+```
+
+If the cer file is on the root directory of the project, just give the file name without a path.
 
 * First parameter indicates which exercise version of the server are you testing. If you are testing
 the exercise 2 implementation, give number two (2) as the first parameter. Give 5 as the fifth
