@@ -2,6 +2,7 @@ package oy.tol.chatclient;
 
 import java.io.BufferedReader;
 import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
@@ -258,7 +259,7 @@ class ChatHttpClient {
 	// software!
 
 	private HttpsURLConnection createTrustingConnectionDebug(URL url) throws KeyStoreException, CertificateException,
-			NoSuchAlgorithmException, IOException, KeyManagementException {
+			NoSuchAlgorithmException, FileNotFoundException, KeyManagementException, IOException {
 		Certificate certificate = CertificateFactory.getInstance("X.509").generateCertificate(new FileInputStream(certificateFile));
 
 		KeyStore keyStore = KeyStore.getInstance("JKS");
