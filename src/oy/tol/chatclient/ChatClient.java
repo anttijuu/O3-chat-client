@@ -132,6 +132,7 @@ public class ChatClient implements ChatClientDataProvider {
 	 * - registering
 	 * - getting chats (without if-modified-since, with it, logged in and not)
 	 * - posting chats (logged in and not)
+	 * - doing POST with empty or invalid JSON
 	 * - doing these in various speeds
 	 */
 	private void doTests() {
