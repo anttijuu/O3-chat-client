@@ -29,9 +29,9 @@ included in the Maven `pom.xml` file included in the project.
 For details, see the course Exercise 2 instructions for the phase where HTTPS support is added
 to the server with a self signed certificate.
 
-You must install the certificate to the directory where you run the client, as `localhost.cer` file.
-That client certificate is then loaded in memory in `ChatHttpClient.createTrustingConnectionDebug`.
-How to do this is explained below in *Preparing the client* section.
+You must prepare the certificate for client use as instructed below. That client side certificate 
+is then loaded in memory in `ChatHttpClient.createTrustingConnectionDebug`. How to do this is 
+explained below in *Preparing the client* section.
 
 **Note** that you *should not* run real servers with self-signed certificates publicly, this is just for development
 and learning purposes. Get a real certificate when deploying servers in the open and for real.
@@ -82,7 +82,7 @@ server's certificate to the client to allow it to use non secure certificates. M
 server has already been configured to use a self signed certificate you created, following
 the Exercise 3 instructions. Then:
 
-1. Run the server
+1. Run the server.
 1. Using your web browser, access the server at `https://localhost:8001/chat`, assuming the defaults were used in implementation.
 1. You will likely get a warning about non secure certificate.
 1. View the certificate (see link below for browser specific info), either from the warning or by clicking the browser's lock symbol to view the site certificate.
@@ -91,7 +91,7 @@ the Exercise 3 instructions. Then:
 
 For browser specific instructions on how to do this, check out [this link](https://www.shellhacks.com/get-ssl-certificate-from-server-site-url-export-download/).
 
-Below you can read how to run the client either form terminal or from within VS Code.
+Next you should read how to run the client either form terminal or from within VS Code.
 
 ## Running the client from terminal
 
@@ -139,9 +139,9 @@ into use in client by providing 5 as the first startup parameter.
 
 ## Running the client from VS Code
 
-If debugging from VS Code, you still need to give the parameteres to the client. How to do that in
-VS Code? If you don't have this already, add a launch configuration to the project. If you haven't
-done that before, [take a look at this manual](https://code.visualstudio.com/docs/editor/debugging#_launch-configurations).  
+If debugging from VS Code, you still need to give the parameteres to the client as instructed above in 
+**Running the client from terminal**. How to do that in VS Code? If you don't have this already, 
+add a launch configuration to the project. If you haven't done that before, [take a look at this manual](https://code.visualstudio.com/docs/editor/debugging#_launch-configurations).  
 
 Make sure you edit the red underlined ´args´ configuration in the `launch.json`, seen in the image below, so that:
 
@@ -150,8 +150,8 @@ Make sure you edit the red underlined ´args´ configuration in the `launch.json
 in the Preparing the client section above. Do *not* use the server certificate you created with `keytool`
 but the one you got using the browser and saved to a file.
 
-Then when you launch the client, do use the Launch ChatClient launch configuration as you can see selected in the
-upper left corner of the image above (red underlining).
+Then when you launch the client (Run or Debug), use the "Launch ChatClient" launch configuration as you can see selected in the
+upper left corner of the image below (red underlining). That contains the launch configuration with startup parameters.
 
 ![Arguments to launch configuration](launch-config-json.png)
 
