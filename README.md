@@ -121,6 +121,20 @@ exercise version, etc.
 * The second parameter must the the path and filename of the server's client side certificate you 
 prepared in the chapter Prepare the client above.
 
+If you look at the client code, it uses (or does not use) certain features from the Server API, 
+depending on the version number. For example, 
+
+* if version is 2, then chat messages and registration info are sent and expected to be from server text strings, and
+* if version info is 3, then client sends messages and registration info as JSON, and
+expects the server to reply using JSON too.
+
+Also, server expects to receive text strings (not JSON) in error situations (code is something else than 2xx) 
+and tries to display those to the user. If your server does not do this, an exception happens but client
+should not crash.
+
+Exercise 4 only implements server internal database, so that has no effect. Exercise 5 latter part implements
+HTTP headers, which client also uses if the first startup parameter is 5.
+
 ## Running the client from VS Code
 
 If debugging from VS Code, you still need to give the parameteres to the client. How to do that in
