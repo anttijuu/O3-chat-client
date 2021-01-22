@@ -38,21 +38,39 @@ public class ChatClient implements ChatClientDataProvider {
 	private boolean autoFetch = false;
 	private Timer autoFetchTimer = null;
 	
+	private int serverVersion = 2;
+
+	public ChatClient(int serverVersion) {
+		this.serverVersion = serverVersion;
+	}
+
 	public static void main(String[] args) {
 		// Run the client.
-		ChatClient client = new ChatClient();
-		client.run();
+		System.out.println("Launching ChatClient with args " + args);
+		int serverVersion = 2;
+		if (args.length == 2) {
+			serverVersion = Integer.parseInt(args[0]);
+			if (serverVersion < 2) {
+				serverVersion = 2;
+			} else if (serverVersion > 5) {
+				serverVersion = 5;
+			}
+		} else {
+			System.out.println("Usage: java -jar chat-client-jar-file 2 ../localhost.cer");
+			System.out.println("Where first parameter is the server version number (exercise number),");
+			System.out.println("and the 2nd parameter is the server's client certificate file with path.");
+			return;
+		}
+		ChatClient client = new ChatClient(serverVersion);
+		client.run(args[1]);
 	}
 
 	/**
-	 * Runs the show:
-	 * - Creates the http client
-	 * - displays the menu
-	 * - handles commands
-	 * until user enters command /exit.
+	 * Runs the show: - Creates the http client - displays the menu - handles
+	 * commands until user enters command /exit.
 	 */
-	public void run() {
-		httpClient = new ChatHttpClient(this);
+	public void run(String certificateFileWithPath) {
+		httpClient = new ChatHttpClient(this, certificateFileWithPath);
 		printCommands();
 		printInfo();
 		Console console = System.console();
@@ -288,11 +306,20 @@ public class ChatClient implements ChatClientDataProvider {
 			if (null != username) {
 				int response = httpClient.getChatMessages();		
 				if (response >= 200 || response < 300) {
-					List<ChatMessage> messages = httpClient.getNewMessages();
-					if (null != messages) {
-						count = messages.size();
-						for (ChatMessage message : messages) {
-							System.out.println(message);
+					if (serverVersion >= 3) {
+						List<ChatMessage> messages = httpClient.getNewMessages();
+						if (null != messages) {
+							count = messages.size();
+							for (ChatMessage message : messages) {
+								System.out.println(message);
+							}
+						}
+					} else {
+						List<String> messages = httpClient.getPlainStringMessages();
+						if (null != messages) {
+							for (String message: messages) {
+								System.out.println(message);
+							}
 						}
 					}
 				} else {
@@ -353,6 +380,7 @@ public class ChatClient implements ChatClientDataProvider {
 	 */
 	private void printInfo() {
 		System.out.println("Server: " + currentServer);
+		System.out.println("Server version assumed: " + serverVersion);
 		System.out.println("User: " + username);
 		System.out.println("Nick: " + nick);
 		System.out.println("Autofetch is " + (autoFetch ? "on" : "off"));
@@ -387,6 +415,11 @@ public class ChatClient implements ChatClientDataProvider {
 	@Override
 	public String getEmail() {
 		return email;
+	}
+
+	@Override
+	public int getServerVersion() {
+		return serverVersion;
 	}
 	
 }

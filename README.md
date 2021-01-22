@@ -1,19 +1,20 @@
 # O3 ChatClient
 
-This project is a chat client app for Ohjelmointi 3 (Programming 3) course.
-
-The client acts as a test client for the server students are developing at the course.
+This project is a chat client app for Ohjelmointi 3 (Programming 3) course. The client acts
+as a test client for the server students are developing at the course.
 
 The client works with a server that has the following things implemented:
 
 * HTTPS support with self-signed certificate.
 * Basic HTTP Authentication support.
 * `/registration` and `/chat` paths implemented.
-* HTTP request and responses are in JSON.
 
-That is, after *Exercise 3* has been finished successfully. You may test your
-Exercise 3 implementation with the client as you work through the Exercise 3.
-Before Exercise 3, use curl as the test client.
+That is, after *Exercise 2* has been finished successfully. You may test your
+Exercise 2 implementation with the client as you work through the exercise.
+In Exercise 1, use curl as the test client.
+
+Note that you need to launch the client with two run time arguments. See instructions on
+those below.
 
 ## Background
 
@@ -38,7 +39,7 @@ and learning purposes. Get a real certificate when deploying servers in the open
 
 ## Dependencies
 
-You need the following to build and run the client:
+The following are needed to build and run the client:
 
 * JDK 15
 * Maven
@@ -77,20 +78,21 @@ app such as Terminus (Win/Linux/macOS) or iTerm (macOS).
 
 ## Preparing the client
 
-Since we are using a self signed certificate, you need to get the server's certificate to the client
-to allow it to use non secure certificates. Make sure the server has already been configured to
-use a self signed certificate you created, following the Exercise 3 instructions. Then:
+Since we are using a self signed certificate in communicating with the server,, you need to get the 
+server's certificate to the client to allow it to use non secure certificates. Make sure the
+server has already been configured to use a self signed certificate you created, following
+the Exercise 3 instructions. Then:
 
 1. Run the server
 1. Using your web browser, access the server at `https://localhost:8001/chat`, assuming the defaults were used in implementation.
-1. You will get a warning about non secure certificate.
+1. You will likely get a warning about non secure certificate.
 1. View the certificate (see link below for browser specific info), either from the warning or by clicking the browser's lock symbol to view the site certificate.
 1. When viewing the certificate, you then save it to the local computer. How this happens depends on the browser, so see the link below.
-1. Save the certificate as `locahost.cer` to the *client* app `target` directory. Client assumes the certification file to be there.
+1. Save the certificate as `locahost.cer` to the *client* app source directory.
 
 For browser specific instructions on how to do this, check out [this link](https://www.shellhacks.com/get-ssl-certificate-from-server-site-url-export-download/).
 
-## Running the client
+## Running the client from terminal
 
 After you have build and prepared the client, you can run it.
 
@@ -101,20 +103,44 @@ error message.
 The default server address is `https://localhost:8001/`. You can change it from the code, or from the
 app when it is running using the command `/server`.
 
-You can launch the client either from VS Code run/debug menu or from the terminal:
+You *have* to give the two parameters to the client as described below.
+
+You can launch the client either from from the terminal (parameters are explained below):
 
 1. `cd target`
-1. `java -jar <the-jar-file-with-dependencies-here.jar>`
+1. `java -jar <the-jar-file-with-dependencies-here.jar> 2 C:\path\to\localhost.cer`
 
-If the launch fails due not having the main class of the project in classpath, try out:
+or in *nix machines:
 
-`java -cp <the-jar-file> oy.tol.chatclient.ChatClient`
+1. `cd target`
+1. `java -jar ChatClient-0.0.1-SNAPSHOT-jar-with-dependencies.jar 2 /path/to/localhost.cer`
 
-Note that the client fails to send and receive data if the server certificate has not
-been saved to the target directory as `localhost.cer`, following the instructions above
-in section Preparing the client.
+* First parameter indicates which exercise version of the server are you testing. If you are testing
+the exercise 2 implementation, give number two (2) as the first parameter. Give 5 as the fifth
+exercise version, etc.
+* The second parameter must the the path and filename of the server's client side certificate you 
+prepared in the chapter Prepare the client above.
 
-For commands available in the client, enter `/help` in the client. The usual process is:
+## Running the client from VS Code
+
+If debugging from VS Code, you still need to give the parameteres to the client. How to do that in
+VS Code? If you don't have this already, add a launch configuration to the project. If you haven't
+done that before, [take a look at this manual](https://code.visualstudio.com/docs/editor/debugging#_launch-configurations).  
+
+Make sure you edit the red underlined ´args´ configuration in the `launch.json`, seen in the image below, so that:
+
+* the first argument is the exercise number you are testing, and
+* the second argument is a full path to the server's client certificate, saved as instructed 
+in the Preparing the client section above. Do *not' use the server certificate you created with `keytool`
+but the one you got using the browser and saved to a file.
+
+![Arguments to launch configuration](launch-config-json.png)
+
+Note that the client fails to send and receive data if the server certificate file is not
+in the directory mentioned in the launch configuration or in the second command line parameter.
+
+Run the client with the parameters, and you should then see the menu the client prints out. For commands 
+available in the client, enter `/help` in the client. The usual process is:
 
 1. First, `/register` the user with the server if not already registered. Unregistered users cannot send or get chats.
 1. If user is already registered, `/login` with the registered user credentials.

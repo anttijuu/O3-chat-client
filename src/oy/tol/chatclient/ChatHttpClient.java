@@ -29,10 +29,15 @@ import org.json.JSONObject;
 
 class ChatHttpClient {
 	
+	// Different paths (contexts) the server supports and this client implements.
 	private static final String CHAT = "chat";
 	private static final String REGISTRATION = "registration";
 
+	// When using JSON (excercise 3), List<ChatMessage> is used,
+	// and earlier, use List<String>.
 	private List<ChatMessage> newMessages = null;
+	private List<String> plainStringMessages = null;
+
 	private String serverNotification = "";
 	
 	private ChatClientDataProvider dataProvider = null;
@@ -45,8 +50,11 @@ class ChatHttpClient {
 	
 	private OffsetDateTime lastGetDateTime = null;
 	
-	ChatHttpClient(ChatClientDataProvider provider) {
+	private String certificateFile;
+
+	ChatHttpClient(ChatClientDataProvider provider, String certificateFileWithPath) {
 		dataProvider = provider;
+		certificateFile = certificateFileWithPath;
 	}
 		
 	public String getServerNotification() {
@@ -55,6 +63,10 @@ class ChatHttpClient {
 	
 	public List<ChatMessage> getNewMessages() {
 		return newMessages;
+	}
+
+	public List<String> getPlainStringMessages() {
+		return plainStringMessages;
 	}
 	
 	public int getChatMessages() throws Exception {
@@ -68,12 +80,16 @@ class ChatHttpClient {
 		HttpsURLConnection connection = createTrustingConnectionDebug(url);
 		
 		connection.setRequestMethod("GET");
-		connection.setRequestProperty("Content-Type", "application/json");
-		if (null != lastGetDateTime) {
+		if (dataProvider.getServerVersion() >= 3) {
+			connection.setRequestProperty("Content-Type", "application/json");
+		} else {
+			connection.setRequestProperty("Content-Type", "text/plain");	
+		}
+		if (dataProvider.getServerVersion() >= 5 && null != lastGetDateTime) {
 			String getModifiedSinceString = lastGetDateTime.format(httpDateFormatter);
 			connection.setRequestProperty("If-Modified-Since", getModifiedSinceString);
 		}
-		
+
 		String auth = dataProvider.getUsername() + ":" + dataProvider.getPassword();
 		byte [] encodedAuth = Base64.getEncoder().encode(auth.getBytes(StandardCharsets.UTF_8));
 		String authHeaderValue = "Basic " + new String(encodedAuth);
@@ -83,36 +99,46 @@ class ChatHttpClient {
 		if (responseCode == 204) {
 			newMessages = null;			
 		} else if (responseCode >= 200 && responseCode < 300) {
-			String lastModifiedString = connection.getHeaderField("Last-Modified");
-			if (null != lastModifiedString) {
-				ZonedDateTime odt = ZonedDateTime.parse(lastModifiedString, httpDateFormatter);
-				lastGetDateTime = OffsetDateTime.ofInstant(odt.toInstant(), ZoneId.systemDefault());
+			if (dataProvider.getServerVersion() >= 5) {
+				String lastModifiedString = connection.getHeaderField("Last-Modified");
+				if (null != lastModifiedString) {
+					ZonedDateTime odt = ZonedDateTime.parse(lastModifiedString, httpDateFormatter);
+					lastGetDateTime = OffsetDateTime.ofInstant(odt.toInstant(), ZoneId.systemDefault());
+				}
 			}
-			BufferedReader in = new BufferedReader(new InputStreamReader(connection.getInputStream(), StandardCharsets.UTF_8));
-			String totalInput = "";
 			String input;
-			while ((input = in.readLine()) != null) {
-				totalInput += input;
+			BufferedReader in = new BufferedReader(new InputStreamReader(connection.getInputStream(), StandardCharsets.UTF_8));
+			if (dataProvider.getServerVersion() >= 3) {
+				String totalInput = "";
+				while ((input = in.readLine()) != null) {
+					totalInput += input;
+				}
+				JSONArray jsonArray = new JSONArray(totalInput);
+				if (jsonArray.length() > 0) {
+					newMessages = new ArrayList<ChatMessage>();
+					for (int index = 0; index < jsonArray.length(); index++) {
+						JSONObject object = jsonArray.getJSONObject(index);
+						ChatMessage msg = ChatMessage.from(object);
+						newMessages.add(msg);
+					}
+					Collections.sort(newMessages, new Comparator<ChatMessage>() {
+						@Override
+						public int compare(ChatMessage lhs, ChatMessage rhs) {
+							return lhs.sent.compareTo(rhs.sent);
+						}
+					});
+				}
+			} else { // Server not yet supports JSON.
+				plainStringMessages = new ArrayList<String>();
+				while ((input = in.readLine()) != null) {
+					plainStringMessages.add(input);
+				}
 			}
 			in.close();
-			JSONArray jsonArray = new JSONArray(totalInput);
-			if (jsonArray.length() > 0) {
-				newMessages = new ArrayList<ChatMessage>();
-				for (int index = 0; index < jsonArray.length(); index++) {
-					JSONObject object = jsonArray.getJSONObject(index);
-					ChatMessage msg = ChatMessage.from(object);
-					newMessages.add(msg);
-				}
-				Collections.sort(newMessages, new Comparator<ChatMessage>() {
-				    @Override
-				    public int compare(ChatMessage lhs, ChatMessage rhs) {
-				        return lhs.sent.compareTo(rhs.sent);
-				    }
-				});
-			}
 			serverNotification = "";
 		} else {
 			newMessages = null;
+			plainStringMessages = null;
 			BufferedReader in = new BufferedReader(new InputStreamReader(connection.getInputStream(), StandardCharsets.UTF_8));
 			String inputLine;
 			while ((inputLine = in.readLine()) != null) {
@@ -135,19 +161,23 @@ class ChatHttpClient {
 		
 		HttpsURLConnection connection = createTrustingConnectionDebug(url);
 		
-		JSONObject msg = new JSONObject();
-		msg.put("user", dataProvider.getNick());
-		msg.put("message", message);
-		ZonedDateTime now = ZonedDateTime.now(ZoneId.of("UTC"));
-		String dateText = now.format(jsonDateFormatter);
-		msg.put("sent", dateText);
-		
-		byte [] msgBytes = msg.toString().getBytes(StandardCharsets.UTF_8); 
-		
+		byte [] msgBytes;
+		if (dataProvider.getServerVersion() >= 3) {
+			JSONObject msg = new JSONObject();
+			msg.put("user", dataProvider.getNick());
+			msg.put("message", message);
+			ZonedDateTime now = ZonedDateTime.now(ZoneId.of("UTC"));
+			String dateText = now.format(jsonDateFormatter);
+			msg.put("sent", dateText);
+			msgBytes = msg.toString().getBytes(StandardCharsets.UTF_8); 
+			connection.setRequestProperty("Content-Type", "application/json");
+		} else {
+			msgBytes = message.getBytes("UTF-8");
+			connection.setRequestProperty("Content-Type", "text/plain");
+		}
 		connection.setRequestMethod("POST");
 		connection.setDoOutput(true);
 		connection.setDoInput(true);
-		connection.setRequestProperty("Content-Type", "application/json");
 		connection.setRequestProperty("Content-Length", String.valueOf(msgBytes.length));		
 		byte [] encodedAuth = Base64.getEncoder().encode(auth.getBytes(StandardCharsets.UTF_8));
 		String authHeaderValue = "Basic " + new String(encodedAuth);
@@ -180,21 +210,29 @@ class ChatHttpClient {
 		addr += REGISTRATION;
 		URL url = new URL(addr);
 
-		JSONObject registrationMsg = new JSONObject();
-		registrationMsg.put("username", dataProvider.getUsername());
-		registrationMsg.put("password", dataProvider.getPassword());
-		registrationMsg.put("email", dataProvider.getEmail());
-		
 		HttpsURLConnection connection = createTrustingConnectionDebug(url);
+
+		byte [] msgBytes;
+		if (dataProvider.getServerVersion() >= 3) {
+			JSONObject registrationMsg = new JSONObject();
+			registrationMsg.put("username", dataProvider.getUsername());
+			registrationMsg.put("password", dataProvider.getPassword());
+			registrationMsg.put("email", dataProvider.getEmail());
+			msgBytes = registrationMsg.toString().getBytes(StandardCharsets.UTF_8); 
+			connection.setRequestProperty("Content-Type", "application/json");
+		} else {
+			String registrationMsg = dataProvider.getUsername() + ":" + dataProvider.getPassword();
+			msgBytes = registrationMsg.getBytes("UTF-8");
+			connection.setRequestProperty("Content-Type", "text/plain");
+		}
+		
 		connection.setRequestMethod("POST");
 		connection.setDoOutput(true);
 		connection.setDoInput(true);
-		connection.setRequestProperty("Content-Type", "application/json");
-		byte [] encodedData = registrationMsg.toString().getBytes(StandardCharsets.UTF_8); 
-		connection.setRequestProperty("Content-Length", String.valueOf(encodedData.length));		
+		connection.setRequestProperty("Content-Length", String.valueOf(msgBytes.length));		
 		
 		OutputStream writer = connection.getOutputStream();
-		writer.write(encodedData);
+		writer.write(msgBytes);
 		writer.close();
 		
 		int responseCode = connection.getResponseCode();
@@ -215,7 +253,7 @@ class ChatHttpClient {
 	// For accepting self signed certificates. Not to be used in production software!
 	
 	private HttpsURLConnection createTrustingConnectionDebug(URL url) throws Exception {
-		Certificate certificate = CertificateFactory.getInstance("X.509").generateCertificate(new FileInputStream("./localhost.cer"));
+		Certificate certificate = CertificateFactory.getInstance("X.509").generateCertificate(new FileInputStream(certificateFile));
 
 		KeyStore keyStore = KeyStore.getInstance("JKS");
 		keyStore.load(null, null);
