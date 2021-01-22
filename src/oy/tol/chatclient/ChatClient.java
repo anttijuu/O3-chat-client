@@ -38,16 +38,17 @@ public class ChatClient implements ChatClientDataProvider {
 	private boolean autoFetch = false;
 	private Timer autoFetchTimer = null;
 	
-	private int serverVersion = 2;
-
-	public ChatClient(int serverVersion) {
-		this.serverVersion = serverVersion;
-	}
+	/**
+	 * 2: Exercise 2 testing
+	 * 3: Exercise 3 testing
+	 * 4: Exercise 4 - only internal server, no API changes, so not needed.
+	 * 5: HTTP If-Modified-Since and Modified-After support in client and server
+	 */
+	private static int serverVersion = 2;
 
 	public static void main(String[] args) {
 		// Run the client.
 		System.out.println("Launching ChatClient with args " + args);
-		int serverVersion = 2;
 		if (args.length == 2) {
 			serverVersion = Integer.parseInt(args[0]);
 			if (serverVersion < 2) {
@@ -61,7 +62,7 @@ public class ChatClient implements ChatClientDataProvider {
 			System.out.println("and the 2nd parameter is the server's client certificate file with path.");
 			return;
 		}
-		ChatClient client = new ChatClient(serverVersion);
+		ChatClient client = new ChatClient();
 		client.run(args[1]);
 	}
 

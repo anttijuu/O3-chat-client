@@ -45,10 +45,9 @@ class ChatHttpClient {
 	private static final int CONNECT_TIMEOUT = 10 * 1000;
 	private static final int REQUEST_TIMEOUT = 30 * 1000;
 	
-	private static final DateTimeFormatter httpDateFormatter = DateTimeFormatter.ofPattern("EEE, dd MMM yyyy HH:mm:ss.SSS z", Locale.ENGLISH).withZone(ZoneId.of("GMT"));
-	private static final DateTimeFormatter jsonDateFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss.SSSX");
+	private static final DateTimeFormatter jsonDateFormatter = DateTimeFormatter
+			.ofPattern("yyyy-MM-dd'T'HH:mm:ss.SSSX");
 	
-	// private OffsetDateTime lastGetDateTime = null;
 	private String latestDataFromServerIsFrom = null;
 	
 	private String certificateFile;
@@ -87,7 +86,6 @@ class ChatHttpClient {
 			connection.setRequestProperty("Content-Type", "text/plain");	
 		}
 		if (dataProvider.getServerVersion() >= 5 && null != latestDataFromServerIsFrom) {
-			// String getModifiedSinceString = lastGetDateTime.format(httpDateFormatter);
 			connection.setRequestProperty("If-Modified-Since", latestDataFromServerIsFrom);
 		}
 
