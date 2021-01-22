@@ -117,7 +117,7 @@ If the cer file is on the root directory of the project, just give the file name
 or in *nix machines:
 
 ```bash
-java -jar target/ChatClient-0.0.1-SNAPSHOT-jar-with-dependencies.jar 2 C:\path\to\localhost.cer
+java -jar target/ChatClient-0.0.1-SNAPSHOT-jar-with-dependencies.jar 2 /path/to/localhost.cer
 ```
 
 If the cer file is on the root directory of the project, just give the file name without a path.
