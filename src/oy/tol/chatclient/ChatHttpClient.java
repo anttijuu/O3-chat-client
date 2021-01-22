@@ -48,7 +48,8 @@ class ChatHttpClient {
 	private static final DateTimeFormatter httpDateFormatter = DateTimeFormatter.ofPattern("EEE, dd MMM yyyy HH:mm:ss.SSS z", Locale.ENGLISH).withZone(ZoneId.of("GMT"));
 	private static final DateTimeFormatter jsonDateFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss.SSSX");
 	
-	private OffsetDateTime lastGetDateTime = null;
+	// private OffsetDateTime lastGetDateTime = null;
+	private String latestDataFromServerIsFrom = null;
 	
 	private String certificateFile;
 
@@ -85,9 +86,9 @@ class ChatHttpClient {
 		} else {
 			connection.setRequestProperty("Content-Type", "text/plain");	
 		}
-		if (dataProvider.getServerVersion() >= 5 && null != lastGetDateTime) {
-			String getModifiedSinceString = lastGetDateTime.format(httpDateFormatter);
-			connection.setRequestProperty("If-Modified-Since", getModifiedSinceString);
+		if (dataProvider.getServerVersion() >= 5 && null != latestDataFromServerIsFrom) {
+			// String getModifiedSinceString = lastGetDateTime.format(httpDateFormatter);
+			connection.setRequestProperty("If-Modified-Since", latestDataFromServerIsFrom);
 		}
 
 		String auth = dataProvider.getUsername() + ":" + dataProvider.getPassword();
@@ -100,11 +101,7 @@ class ChatHttpClient {
 			newMessages = null;			
 		} else if (responseCode >= 200 && responseCode < 300) {
 			if (dataProvider.getServerVersion() >= 5) {
-				String lastModifiedString = connection.getHeaderField("Last-Modified");
-				if (null != lastModifiedString) {
-					ZonedDateTime odt = ZonedDateTime.parse(lastModifiedString, httpDateFormatter);
-					lastGetDateTime = OffsetDateTime.ofInstant(odt.toInstant(), ZoneId.systemDefault());
-				}
+				latestDataFromServerIsFrom = connection.getHeaderField("Last-Modified");
 			}
 			String input;
 			BufferedReader in = new BufferedReader(new InputStreamReader(connection.getInputStream(), StandardCharsets.UTF_8));

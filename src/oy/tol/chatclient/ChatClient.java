@@ -318,6 +318,7 @@ public class ChatClient implements ChatClientDataProvider {
 					} else {
 						List<String> messages = httpClient.getPlainStringMessages();
 						if (null != messages) {
+							count = messages.size();
 							for (String message: messages) {
 								System.out.println(message);
 							}

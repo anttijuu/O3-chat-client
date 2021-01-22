@@ -16,7 +16,7 @@
             "request": "launch",
             "mainClass": "oy.tol.chatclient/oy.tol.chatclient.ChatClient",
             "projectName": "ChatClient",
-            "args": ["5","/Users/juustila/workspace/O3/O3-chat-client/target/localhost.cer"]
+            "args": ["5","/Users/juustila/workspace/O3/O3-chat-client/localhost.cer"]
         }
     ]
 }
