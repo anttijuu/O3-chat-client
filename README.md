@@ -149,7 +149,7 @@ If debugging from VS Code, you still need to give the parameteres to the client 
 **Running the client from terminal**. How to do that in VS Code? If you don't have this already, 
 add a launch configuration to the project. If you haven't done that before, [take a look at this manual](https://code.visualstudio.com/docs/editor/debugging#_launch-configurations).  
 
-Make sure you edit the red underlined ´args´ configuration in the `launch.json`, seen in the image below, so that:
+Make sure you edit the red underlined `args` configuration in the `launch.json`, seen in the image below, so that:
 
 * the first argument is the exercise number you are testing, and
 * the second argument is a full path to the server's client certificate, saved as instructed 
