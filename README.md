@@ -80,7 +80,7 @@ app such as Terminus (Win/Linux/macOS) or iTerm (macOS).
 Since we are using a self signed certificate in communicating with the server, you need to get the 
 server's certificate to the client to allow it to use non secure certificates. Make sure the
 server has already been configured to use a self signed certificate you created, following
-the Exercise 3 instructions. Then:
+the Exercise 2 instructions. Then:
 
 1. Run the server.
 1. Using your web browser, access the server at `https://localhost:8001/chat`, assuming the defaults were used in implementation.
@@ -127,15 +127,15 @@ depending on the version number. For example,
 
 * if version is 2, then chat messages and registration info are sent and expected to be from server text strings, and
 * if version info is 3, then client sends messages and registration info as JSON, and
-expects the server to reply using JSON too.
+expects the server to reply using JSON.
+* If the version is 5, `If-Modified-Since` and `Last-Modified` Headers are used by the client to get only the
+recent chat messages from the server.
 
 Also, server expects to receive text strings (not JSON) in error situations (code is something else than 2xx) 
 and tries to display those to the user. If your server does not do this, an exception happens but client
 should not crash.
 
 Exercise 4 only implements server internal database, so that has no effect on client/server comms. 
-Exercise 5 (latter part) implements HTTP headers, which client also uses if the first startup parameter is 5. Take these 
-into use in client by providing 5 as the first startup parameter.
 
 ## Running the client from VS Code
 
