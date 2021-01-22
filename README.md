@@ -145,13 +145,15 @@ Make sure you edit the red underlined ´args´ configuration in the `launch.json
 
 * the first argument is the exercise number you are testing, and
 * the second argument is a full path to the server's client certificate, saved as instructed 
-in the Preparing the client section above. Do *not' use the server certificate you created with `keytool`
+in the Preparing the client section above. Do *not*'* use the server certificate you created with `keytool`
 but the one you got using the browser and saved to a file.
 
 ![Arguments to launch configuration](launch-config-json.png)
 
+## General usage of the client
+
 Note that the client fails to send and receive data if the server certificate file is not
-in the directory mentioned in the launch configuration or in the second command line parameter.
+in the directory mentioned in the VS Code launch configuration or in the second command line parameter.
 
 Run the client with the parameters, and you should then see the menu the client prints out. For commands 
 available in the client, enter `/help` in the client. The usual process is:
