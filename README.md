@@ -93,7 +93,7 @@ For browser specific instructions on how to do this, check out [this link](https
 
 Next you should read how to run the client either form terminal or from within VS Code.
 
-Note that you *cannot* just copy the server certificate to the client you created with `keytool`. That is a private
+Note that you *cannot* just copy the server certificate you created with `keytool` to the client. That is a private
 file to the server only, and should not be given to clients or anyone not authorized to access that certificate.
 
 ## Startup parameters when launching the client
