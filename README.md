@@ -13,7 +13,7 @@ That is, after *Exercise 2* has been finished successfully. You may test your
 Exercise 2 implementation with the client as you work through the exercise.
 In Exercise 1, use curl as the test client.
 
-Note that you need to launch the client with two run time arguments. See instructions on
+Note that you need to launch the client with two startup arguments. See instructions on
 those below.
 
 ## Background
@@ -26,9 +26,8 @@ see the server API document at the course Moodle workspace.
 The content of the HTTPS requests and responses are JSON. The JSON library to use is
 included in the Maven `pom.xml` file included in the project.
 
-The client assumes the server has a self signed certificate created using the name "localhost".
-For details, see the course Exercise 3 instructions for the phase where HTTPS support is added
-to the server.
+For details, see the course Exercise 2 instructions for the phase where HTTPS support is added
+to the server with a self signed certificate.
 
 You must install the certificate to the directory where you run the client, as `localhost.cer` file.
 That client certificate is then loaded in memory in `ChatHttpClient.createTrustingConnectionDebug`.
@@ -73,12 +72,12 @@ The console UI in Eclipse may not work if debugging within Eclipse. In that case
 from the command line.
 
 Windows Command prompt does not by default support UTF-8, so any special chars may end up not transferring
-properly. Prefer using VS Code terminal which does support UTF-8, or use a proper terminal
+properly. Prefer using VS Code terminal which does support UTF-8, or even better, use a proper terminal
 app such as Terminus (Win/Linux/macOS) or iTerm (macOS).
 
 ## Preparing the client
 
-Since we are using a self signed certificate in communicating with the server,, you need to get the 
+Since we are using a self signed certificate in communicating with the server, you need to get the 
 server's certificate to the client to allow it to use non secure certificates. Make sure the
 server has already been configured to use a self signed certificate you created, following
 the Exercise 3 instructions. Then:
@@ -88,9 +87,11 @@ the Exercise 3 instructions. Then:
 1. You will likely get a warning about non secure certificate.
 1. View the certificate (see link below for browser specific info), either from the warning or by clicking the browser's lock symbol to view the site certificate.
 1. When viewing the certificate, you then save it to the local computer. How this happens depends on the browser, so see the link below.
-1. Save the certificate as `locahost.cer` to the *client* app source directory.
+1. Save the certificate as `locahost.cer` to the client app source directory, for example.
 
 For browser specific instructions on how to do this, check out [this link](https://www.shellhacks.com/get-ssl-certificate-from-server-site-url-export-download/).
+
+Below you can read how to run the client either form terminal or from within VS Code.
 
 ## Running the client from terminal
 
@@ -132,8 +133,9 @@ Also, server expects to receive text strings (not JSON) in error situations (cod
 and tries to display those to the user. If your server does not do this, an exception happens but client
 should not crash.
 
-Exercise 4 only implements server internal database, so that has no effect. Exercise 5 latter part implements
-HTTP headers, which client also uses if the first startup parameter is 5.
+Exercise 4 only implements server internal database, so that has no effect on client/server comms. 
+Exercise 5 (latter part) implements HTTP headers, which client also uses if the first startup parameter is 5. Take these 
+into use in client by providing 5 as the first startup parameter.
 
 ## Running the client from VS Code
 
@@ -145,8 +147,11 @@ Make sure you edit the red underlined ´args´ configuration in the `launch.json
 
 * the first argument is the exercise number you are testing, and
 * the second argument is a full path to the server's client certificate, saved as instructed 
-in the Preparing the client section above. Do *not*'* use the server certificate you created with `keytool`
+in the Preparing the client section above. Do *not* use the server certificate you created with `keytool`
 but the one you got using the browser and saved to a file.
+
+Then when you launch the client, do use the Launch ChatClient launch configuration as you can see selected in the
+upper left corner of the image above (red underlining).
 
 ![Arguments to launch configuration](launch-config-json.png)
 
@@ -171,8 +176,9 @@ testing, following the course instructions.
 
 If the server works with the client, your server should fulfill the requirements of the course.
 
-Note that the current version does not yet implement the `/test` command. When it does, you can
-use that to test the server with valid/invalid requests to see if your server is robust enough.
+Note that the current version does not yet implement the `/test` command. That feature is still
+under construction. When it is implemented, you can use that to test the server with valid/invalid 
+requests to see if your server is robust enough.
 
 ## Information
 
