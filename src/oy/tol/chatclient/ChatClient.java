@@ -131,6 +131,7 @@ public class ChatClient implements ChatClientDataProvider {
 	/**
 	 * Does various tests to the server:
 	 * - registering
+	 * - logging in without registering
 	 * - getting chats (without if-modified-since, with it, logged in and not)
 	 * - posting chats (logged in and not)
 	 * - doing POST with empty or invalid JSON
