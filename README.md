@@ -93,6 +93,31 @@ For browser specific instructions on how to do this, check out [this link](https
 
 Next you should read how to run the client either form terminal or from within VS Code.
 
+Note that you *cannot* just copy the server certificate to the client you created with `keytool`. That is a private
+file to the server only, and should not be given to clients or anyone not authorized to access that certificate.
+
+## Startup parameters when launching the client
+
+Whether you launch the client from terminal or VS Code, you must give it two startup parameters:
+
+* First parameter indicates which exercise version of the server are you testing. If you are testing
+the exercise 2 implementation, give number two (2) as the first parameter. Give 5 as the fifth
+exercise version, etc.
+* The second parameter must the the path and filename of the server's client side certificate you 
+prepared in the chapter Prepare the client discussed above.
+
+If you look at the client code, it uses (or does not use) certain features from the Server API, 
+depending on the version number. For example:
+
+* if version is 2: chat messages are transferred as simple strings, and registration info is `username:password`.
+* if version is 3: client sends registration and messages as JSON, and expects the server to reply using JSON.
+* If the version is 5, `If-Modified-Since` and `Last-Modified` headers are used by the client to get only the
+recent chat messages from the server, something that the server must also implement properly.
+
+Exercise 4 only implements server internal database, so that has no effect on client/server comms. Also the
+first part of Exercise 5, hashing and salting the password, does not change the client/server comms so you 
+can use 3 until you implement the latter part of the Exercise 5.
+
 ## Running the client from terminal
 
 After you have build and prepared the client, you can run it.
@@ -104,15 +129,13 @@ error message.
 The default server address is `https://localhost:8001/`. You can change it from the code, or from the
 app when it is running using the command `/server`.
 
-You *have* to give the two parameters to the client as described below.
+You *have* to give the two parameters to the client as described above.
 
-You can launch the client either from from the terminal (parameters are explained below):
+You can launch the client either from from the terminal:
 
 ```bash
 java -jar target\ChatClient-0.0.1-SNAPSHOT-jar-with-dependencies.jar 2 C:\path\to\localhost.cer
 ```
-
-If the cer file is on the root directory of the project, just give the file name without a path.
 
 or in *nix machines:
 
@@ -120,41 +143,22 @@ or in *nix machines:
 java -jar target/ChatClient-0.0.1-SNAPSHOT-jar-with-dependencies.jar 2 /path/to/localhost.cer
 ```
 
-If the cer file is on the root directory of the project, just give the file name without a path.
+If the cer file is in the dirctory where you launch the client, just give the file name without a path.
 
-* First parameter indicates which exercise version of the server are you testing. If you are testing
-the exercise 2 implementation, give number two (2) as the first parameter. Give 5 as the fifth
-exercise version, etc.
-* The second parameter must the the path and filename of the server's client side certificate you 
-prepared in the chapter Prepare the client above.
-
-If you look at the client code, it uses (or does not use) certain features from the Server API, 
-depending on the version number. For example, 
-
-* if version is 2, then chat messages and registration info are sent and expected to be from server text strings, and
-* if version info is 3, then client sends messages and registration info as JSON, and
-expects the server to reply using JSON.
-* If the version is 5, `If-Modified-Since` and `Last-Modified` Headers are used by the client to get only the
-recent chat messages from the server.
-
-Also, server expects to receive text strings (not JSON) in error situations (code is something else than 2xx) 
-and tries to display those to the user. If your server does not do this, an exception happens but client
-should not crash.
-
-Exercise 4 only implements server internal database, so that has no effect on client/server comms. 
+If server indicates an error for the request (success code is not 2xx), this client expects that the response body
+has a simple string describing what went wrong in the server. Client tries to read and display those to the user. If your server does not do this and there is no response body, an exception happens and is reported, but client should not crash.
 
 ## Running the client from VS Code
 
 If debugging from VS Code, you still need to give the parameteres to the client as instructed above in 
-**Running the client from terminal**. How to do that in VS Code? If you don't have this already, 
-add a launch configuration to the project. If you haven't done that before, [take a look at this manual](https://code.visualstudio.com/docs/editor/debugging#_launch-configurations).  
+**Startup parameters...**. How to do that in VS Code? If you don't have launch configuration file
+`launch.json` already, add a launch configuration to the project. If you don't know how, [take a look at this manual](https://code.visualstudio.com/docs/editor/debugging#_launch-configurations).  
 
 Make sure you edit the red underlined `args` configuration in the `launch.json`, seen in the image below, so that:
 
 * the first argument is the exercise number you are testing, and
-* the second argument is a full path to the server's client certificate, saved as instructed 
-in the Preparing the client section above. Do *not* use the server certificate you created with `keytool`
-but the one you got using the browser and saved to a file.
+* the second argument is a *full path* to the server's client certificate, saved as instructed 
+in the Preparing the client section above. 
 
 Then when you launch the client (Run or Debug), use the "Launch ChatClient" launch configuration as you can see selected in the
 upper left corner of the image below (red underlining). That contains the launch configuration with startup parameters.
@@ -178,15 +182,19 @@ available in the client, enter `/help` in the client. The usual process is:
 1. Exit the client app using the command `/exit`.
 
 Test your server functionality with the client. In case you doubt the results, you can also use curl for
-testing, following the course instructions.
+testing, following the course instructions. Curl also helps you in more detailed analysis, using the `--trace-ascii`
+option you can use to see details of the comms between the client and the server.
 
-If the server works with the client, your server should fulfill the requirements of the course.
+If the server works with the client, your server should fulfill the requirements of the course, depending
+on the other requirements listed in the course project requrements and Server API requirements.
+
+---
 
 Note that the current version does not yet implement the `/test` command. That feature is still
 under construction. When it is implemented, you can use that to test the server with valid/invalid 
 requests to see if your server is robust enough.
 
-## Information
+## More information
 
 (c) Antti Juustila 2020-2021, All rights reserved.
 
