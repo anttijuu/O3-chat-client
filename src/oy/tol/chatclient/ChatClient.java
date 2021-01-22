@@ -1,6 +1,11 @@
 package oy.tol.chatclient;
 
 import java.io.Console;
+import java.io.IOException;
+import java.security.KeyManagementException;
+import java.security.KeyStoreException;
+import java.security.NoSuchAlgorithmException;
+import java.security.cert.CertificateException;
 import java.util.List;
 import java.util.Timer;
 import java.util.TimerTask;
@@ -192,8 +197,8 @@ public class ChatClient implements ChatClientDataProvider {
 						}
 					}
 				}, AUTO_FETCH_INTERVAL, AUTO_FETCH_INTERVAL);
-			} catch (Exception e) {
-				System.out.println("Cannot autofetch: " + e.getLocalizedMessage());
+			} catch (IllegalArgumentException | IllegalStateException | NullPointerException e) {
+				System.out.println("Faulty timer usage: " + e.getLocalizedMessage());
 				autoFetch = false;
 			}
 		}
@@ -292,7 +297,10 @@ public class ChatClient implements ChatClientDataProvider {
 				System.out.println("Failed to register!");
 				System.out.println("Error from server: " + response + " " + httpClient.getServerNotification());
 			}
-		} catch (Exception e) {
+		} catch (KeyManagementException | KeyStoreException | CertificateException | NoSuchAlgorithmException e) {
+			System.out.println("ERROR in server certificate");
+			System.out.println(e.getLocalizedMessage());
+		} catch (IOException e) {
 			System.out.println("ERROR in user registration on server " + currentServer);
 			System.out.println(e.getLocalizedMessage());
 		}
@@ -332,10 +340,12 @@ public class ChatClient implements ChatClientDataProvider {
 			} else {
 				System.out.println("Not yet registered or logged in!");
 			}
-		} catch (Exception e) {
+		} catch (KeyManagementException | KeyStoreException | CertificateException | NoSuchAlgorithmException e) {
+			System.out.println("ERROR in server certificate");
+			System.out.println(e.getLocalizedMessage());
+		} catch (IOException e) {
 			System.out.println("ERROR in getting messages from server " + currentServer);
 			System.out.println(e.getLocalizedMessage());
-			autoFetch = false;
 		}
 		return count;
 	}
@@ -352,7 +362,10 @@ public class ChatClient implements ChatClientDataProvider {
 				if (response < 200 || response >= 300) {
 					System.out.println("Error from server: " + response + " " + httpClient.getServerNotification());
 				}
-			} catch (Exception e) {
+			} catch (KeyManagementException | KeyStoreException | CertificateException | NoSuchAlgorithmException e) {
+				System.out.println("ERROR in server certificate");
+				System.out.println(e.getLocalizedMessage());
+			} catch (IOException e) {
 				System.out.println("ERROR in posting message to server " + currentServer);
 				System.out.println(e.getLocalizedMessage());
 			}
