@@ -16,6 +16,10 @@ In Exercise 1, use curl as the test client.
 Note that you need to launch the client with two startup arguments. See instructions on
 those below.
 
+[This demo video](https://youtu.be/FgANceteues) walks you through 1) how to get the code, 
+2) build it, 3) prepare the client with the self-signed certificate and 4) run it 
+either from the command line or from VS Code.
+
 ## Background
 
 The protocol to use the server is outlined in the interaction diagram below. For details,
