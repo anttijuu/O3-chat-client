@@ -1,6 +1,12 @@
 package oy.tol.chatclient;
 
 import java.io.Console;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.security.KeyManagementException;
+import java.security.KeyStoreException;
+import java.security.NoSuchAlgorithmException;
+import java.security.cert.CertificateException;
 import java.util.List;
 import java.util.Timer;
 import java.util.TimerTask;
@@ -38,21 +44,40 @@ public class ChatClient implements ChatClientDataProvider {
 	private boolean autoFetch = false;
 	private Timer autoFetchTimer = null;
 	
+	/**
+	 * 2: Exercise 2 testing
+	 * 3: Exercise 3 testing
+	 * 4: Exercise 4 - only internal server, no API changes, so not needed.
+	 * 5: HTTP If-Modified-Since and Modified-After support in client and server
+	 */
+	private static int serverVersion = 2;
+
 	public static void main(String[] args) {
 		// Run the client.
+		System.out.println("Launching ChatClient with args " + args);
+		if (args.length == 2) {
+			serverVersion = Integer.parseInt(args[0]);
+			if (serverVersion < 2) {
+				serverVersion = 2;
+			} else if (serverVersion > 5) {
+				serverVersion = 5;
+			}
+		} else {
+			System.out.println("Usage: java -jar chat-client-jar-file 2 ../localhost.cer");
+			System.out.println("Where first parameter is the server version number (exercise number),");
+			System.out.println("and the 2nd parameter is the server's client certificate file with path.");
+			return;
+		}
 		ChatClient client = new ChatClient();
-		client.run();
+		client.run(args[1]);
 	}
 
 	/**
-	 * Runs the show:
-	 * - Creates the http client
-	 * - displays the menu
-	 * - handles commands
-	 * until user enters command /exit.
+	 * Runs the show: - Creates the http client - displays the menu - handles
+	 * commands until user enters command /exit.
 	 */
-	public void run() {
-		httpClient = new ChatHttpClient(this);
+	public void run(String certificateFileWithPath) {
+		httpClient = new ChatHttpClient(this, certificateFileWithPath);
 		printCommands();
 		printInfo();
 		Console console = System.console();
@@ -112,8 +137,10 @@ public class ChatClient implements ChatClientDataProvider {
 	/**
 	 * Does various tests to the server:
 	 * - registering
+	 * - logging in without registering
 	 * - getting chats (without if-modified-since, with it, logged in and not)
 	 * - posting chats (logged in and not)
+	 * - doing POST with empty or invalid JSON
 	 * - doing these in various speeds
 	 */
 	private void doTests() {
@@ -171,8 +198,8 @@ public class ChatClient implements ChatClientDataProvider {
 						}
 					}
 				}, AUTO_FETCH_INTERVAL, AUTO_FETCH_INTERVAL);
-			} catch (Exception e) {
-				System.out.println("Cannot autofetch: " + e.getLocalizedMessage());
+			} catch (IllegalArgumentException | IllegalStateException | NullPointerException e) {
+				System.out.println(" **** Faulty timer usage: " + e.getLocalizedMessage());
 				autoFetch = false;
 			}
 		}
@@ -271,8 +298,11 @@ public class ChatClient implements ChatClientDataProvider {
 				System.out.println("Failed to register!");
 				System.out.println("Error from server: " + response + " " + httpClient.getServerNotification());
 			}
-		} catch (Exception e) {
-			System.out.println("ERROR in user registration on server " + currentServer);
+		} catch (KeyManagementException | KeyStoreException | CertificateException | NoSuchAlgorithmException | FileNotFoundException e) {
+			System.out.println(" **** ERROR in server certificate");
+			System.out.println(e.getLocalizedMessage());
+		} catch (IOException e) {
+			System.out.println(" **** ERROR in user registration with server " + currentServer);
 			System.out.println(e.getLocalizedMessage());
 		}
 	}
@@ -288,11 +318,21 @@ public class ChatClient implements ChatClientDataProvider {
 			if (null != username) {
 				int response = httpClient.getChatMessages();		
 				if (response >= 200 || response < 300) {
-					List<ChatMessage> messages = httpClient.getNewMessages();
-					if (null != messages) {
-						count = messages.size();
-						for (ChatMessage message : messages) {
-							System.out.println(message);
+					if (serverVersion >= 3) {
+						List<ChatMessage> messages = httpClient.getNewMessages();
+						if (null != messages) {
+							count = messages.size();
+							for (ChatMessage message : messages) {
+								System.out.println(message);
+							}
+						}
+					} else {
+						List<String> messages = httpClient.getPlainStringMessages();
+						if (null != messages) {
+							count = messages.size();
+							for (String message: messages) {
+								System.out.println(message);
+							}
 						}
 					}
 				} else {
@@ -301,10 +341,12 @@ public class ChatClient implements ChatClientDataProvider {
 			} else {
 				System.out.println("Not yet registered or logged in!");
 			}
-		} catch (Exception e) {
-			System.out.println("ERROR in getting messages from server " + currentServer);
+		} catch (KeyManagementException | KeyStoreException | CertificateException | NoSuchAlgorithmException | FileNotFoundException e) {
+			System.out.println(" **** ERROR in server certificate");
 			System.out.println(e.getLocalizedMessage());
-			autoFetch = false;
+		} catch (IOException e) {
+			System.out.println(" **** ERROR in getting messages from server " + currentServer);
+			System.out.println(e.getLocalizedMessage());
 		}
 		return count;
 	}
@@ -321,8 +363,11 @@ public class ChatClient implements ChatClientDataProvider {
 				if (response < 200 || response >= 300) {
 					System.out.println("Error from server: " + response + " " + httpClient.getServerNotification());
 				}
-			} catch (Exception e) {
-				System.out.println("ERROR in posting message to server " + currentServer);
+			} catch (KeyManagementException | KeyStoreException | CertificateException | NoSuchAlgorithmException | FileNotFoundException e) {
+				System.out.println(" **** ERROR in server certificate");
+				System.out.println(e.getLocalizedMessage());
+			} catch (IOException e) {
+				System.out.println(" **** ERROR in posting message to server " + currentServer);
 				System.out.println(e.getLocalizedMessage());
 			}
 		} else {
@@ -353,6 +398,7 @@ public class ChatClient implements ChatClientDataProvider {
 	 */
 	private void printInfo() {
 		System.out.println("Server: " + currentServer);
+		System.out.println("Server version assumed: " + serverVersion);
 		System.out.println("User: " + username);
 		System.out.println("Nick: " + nick);
 		System.out.println("Autofetch is " + (autoFetch ? "on" : "off"));
@@ -387,6 +433,11 @@ public class ChatClient implements ChatClientDataProvider {
 	@Override
 	public String getEmail() {
 		return email;
+	}
+
+	@Override
+	public int getServerVersion() {
+		return serverVersion;
 	}
 	
 }
