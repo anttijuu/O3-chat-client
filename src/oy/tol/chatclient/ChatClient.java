@@ -25,7 +25,7 @@ public class ChatClient implements ChatClientDataProvider {
 	private static final String CMD_TEST = "/test";
 	private static final String CMD_EXIT = "/exit";
 
-	private static final int AUTO_FETCH_INTERVAL = 1000;
+	private static final int AUTO_FETCH_INTERVAL = 1000; // ms
 	
 	private String currentServer = SERVER; 	// URL of the server without paths.
 	private String username = null;			// Registered & logged user.
