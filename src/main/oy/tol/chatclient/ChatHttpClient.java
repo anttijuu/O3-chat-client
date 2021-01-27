@@ -30,7 +30,7 @@ import javax.net.ssl.TrustManagerFactory;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
-class ChatHttpClient {
+public class ChatHttpClient {
 
 	// Different paths (contexts) the server supports and this client implements.
 	private static final String CHAT = "chat";
