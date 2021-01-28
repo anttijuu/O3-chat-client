@@ -155,7 +155,7 @@ public class ChatHttpServerTests implements ChatClientDataProvider {
 
 	@Override
 	public int getServerVersion() {
-		return 5;
+		return 2;
 	}
 
     private String randomString(int length) {
