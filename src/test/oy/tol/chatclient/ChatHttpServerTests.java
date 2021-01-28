@@ -32,21 +32,29 @@ public class ChatHttpServerTests implements ChatClientDataProvider {
     private String username = null;
     private String password = null;
     private String email = null;
+    // TODO: Change these for your setup!
+    // Also retrieve the server client side certificate and save it to a file
+    // as instructed in the Preparing the client section (and video), and
+    // Change the path of the client side certificate!
+    private int serverVersion = 2;
+    private String existingUser = "antti";
+    private String existingPassword = "juu";
+    private String clientSideCertificate = "/Users/anttijuustila/workspace/O3/O3-chat-client/localhost.cer";
 
     ChatHttpServerTests() {
-        httpClient = new ChatHttpClient(this, "/Users/anttijuustila/workspace/O3/O3-chat-client/localhost.cer");
+        httpClient = new ChatHttpClient(this, clientSideCertificate);
     }
 
     @Test 
     @Order(1)
-    @DisplayName("Testing HTTP GET /chat without valid user credentials")
+    @DisplayName("Testing HTTP GET /chat without valid user credentials, must throw")
     void getWithoutCredentials() {
         assertThrows(Exception.class, () -> httpClient.getChatMessages());
     }
 
     @Test 
     @Order(2)
-    @DisplayName("Testing HTTP GET /chat with invalid user credentials")
+    @DisplayName("Testing HTTP GET /chat with invalid user credentials, must throw")
     void getWithInvalidCredentials() {
         username = "randomnonexistentusernamehere";
         password = "invalidpasswordtoo";
@@ -72,9 +80,8 @@ public class ChatHttpServerTests implements ChatClientDataProvider {
     @DisplayName("Testing getting messages from server")
     void testGetMessages() {
         try {
-            // Must be an existing user in the database.
-            username = "antti";
-            password = "juu";
+            username = existingUser;
+            password = existingPassword;
             int result = httpClient.getChatMessages();
             assertTrue(result == 200 || result == 204, () -> "Must get 200 or 204 from server");
 		} catch (Exception e) {
@@ -87,9 +94,8 @@ public class ChatHttpServerTests implements ChatClientDataProvider {
     @DisplayName("Testing posting messages to server")
     void testPostMessages() {
         try {
-            // Must be an existing user in the database.
-            username = "antti";
-            password = "juu";
+            username = existingUser;
+            password = existingPassword;
             String message = randomString(120);
             int result = httpClient.postChatMessage(message);
             assertTrue(result == 200, () -> "Must get 200 from server");
@@ -104,8 +110,8 @@ public class ChatHttpServerTests implements ChatClientDataProvider {
     void testHeavyGetPostMessages() {
         try {
             // Must be an existing user in the database.
-            username = "antti";
-            password = "juu";
+            username = existingUser;
+            password = existingPassword;
             final int MSGS_TO_ADD = 10;
             final int LOOPS_TO_RUN = 10;
             int loop = LOOPS_TO_RUN;
@@ -155,7 +161,7 @@ public class ChatHttpServerTests implements ChatClientDataProvider {
 
 	@Override
 	public int getServerVersion() {
-		return 2;
+		return serverVersion;
 	}
 
     private String randomString(int length) {
