@@ -103,6 +103,9 @@ public class RawHttpsRegistrationTests {
                 invalid =  "{ \"diiipa\" : \"daapa\" }";
                 status = registerWithInvalidContent(invalid);
                 assertTrue(status >= 400, () -> "Server should return error 4xx.");
+                invalid =  "{ \"diiipa : \"daapa\" }";
+                status = registerWithInvalidContent(invalid);
+                assertTrue(status >= 400, () -> "Server should return error 4xx.");
                 }
             invalid =  "siskonmakkarakeitto";
             status = registerWithInvalidContent(invalid);
