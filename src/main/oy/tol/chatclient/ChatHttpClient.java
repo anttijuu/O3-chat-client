@@ -140,7 +140,7 @@ public class ChatHttpClient {
 			newMessages = null;
 			plainStringMessages = null;
 			BufferedReader in = new BufferedReader(
-					new InputStreamReader(connection.getInputStream(), StandardCharsets.UTF_8));
+					new InputStreamReader(connection.getErrorStream(), StandardCharsets.UTF_8));
 			String inputLine;
 			while ((inputLine = in.readLine()) != null) {
 				serverNotification += " " + inputLine;
@@ -195,7 +195,7 @@ public class ChatHttpClient {
 			serverNotification = "";
 		} else {
 			BufferedReader in = new BufferedReader(
-					new InputStreamReader(connection.getInputStream(), StandardCharsets.UTF_8));
+					new InputStreamReader(connection.getErrorStream(), StandardCharsets.UTF_8));
 			String inputLine;
 			while ((inputLine = in.readLine()) != null) {
 				serverNotification += " " + inputLine;
@@ -245,7 +245,7 @@ public class ChatHttpClient {
 			serverNotification = "";
 		} else {
 			BufferedReader in = new BufferedReader(
-					new InputStreamReader(connection.getInputStream(), StandardCharsets.UTF_8));
+					new InputStreamReader(connection.getErrorStream(), StandardCharsets.UTF_8));
 			String inputLine;
 			while ((inputLine = in.readLine()) != null) {
 				serverNotification += " " + inputLine;

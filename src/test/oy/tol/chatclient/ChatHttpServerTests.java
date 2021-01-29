@@ -2,12 +2,6 @@ package oy.tol.chatclient;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-import java.io.IOException;
-import java.security.KeyManagementException;
-import java.security.KeyStoreException;
-import java.security.NoSuchAlgorithmException;
-import java.security.cert.CertificateException;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 
@@ -21,11 +15,12 @@ import static org.junit.jupiter.api.Assertions.fail;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.TestMethodOrder;
-import org.junit.jupiter.api.extension.BeforeAllCallback;
-import org.junit.jupiter.api.extension.ExtensionContext;
-import org.junit.jupiter.api.BeforeAll;
 
+/*
+These tests test the server using the ChatHttpClient.
+*/
 @TestMethodOrder(OrderAnnotation.class)
+@DisplayName("Tests using ChatHttpClient")
 public class ChatHttpServerTests implements ChatClientDataProvider {
 
     private static ChatHttpClient httpClient = null;
@@ -36,9 +31,9 @@ public class ChatHttpServerTests implements ChatClientDataProvider {
     // Also retrieve the server client side certificate and save it to a file
     // as instructed in the Preparing the client section (and video), and
     // Change the path of the client side certificate!
-    private int serverVersion = 2;
-    private String existingUser = "antti";
-    private String existingPassword = "juu";
+    private int serverVersion = 2;              // The exercise number you test
+    private String existingUser = "antti";      // Must be a user in your database already
+    private String existingPassword = "juu";    // Must be a valid password for the above user
     private String clientSideCertificate = "/Users/anttijuustila/workspace/O3/O3-chat-client/localhost.cer";
 
     ChatHttpServerTests() {
@@ -90,6 +85,34 @@ public class ChatHttpServerTests implements ChatClientDataProvider {
     }
 
     @Order(5)
+    @DisplayName("Testing posting empty messages to server")
+    void testPostEmptyMessages() {
+        try {
+            username = existingUser;
+            password = existingPassword;
+            String message = "";
+            int result = httpClient.postChatMessage(message);
+            assertTrue(result >= 400, () -> "Must get error from server");
+		} catch (Exception e) {
+			fail("Exception in posting empty chat message to server: " + e.getMessage());
+		}
+    }
+
+    @Order(5)
+    @DisplayName("Testing posting whitespace messages to server")
+    void testPostWhitespaceMessages() {
+        try {
+            username = existingUser;
+            password = existingPassword;
+            String message = "    ";
+            int result = httpClient.postChatMessage(message);
+            assertTrue(result >= 400, () -> "Must get error from server");
+		} catch (Exception e) {
+			fail("Exception in posting empty chat message to server: " + e.getMessage());
+		}
+    }
+
+    @Order(7)
     @RepeatedTest(10)
     @DisplayName("Testing posting messages to server")
     void testPostMessages() {
@@ -104,7 +127,7 @@ public class ChatHttpServerTests implements ChatClientDataProvider {
 		}
     }
 
-    @Order(6)
+    @Order(8)
     @Test
     @DisplayName("Testing posting and getting messages to and from server")
     void testHeavyGetPostMessages() {
