@@ -38,8 +38,8 @@ import org.json.JSONObject;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.TestMethodOrder;
 
-@DisplayName("Tests using HttpsUrlConnection")
-public class RawHttpsTests {
+@DisplayName("Tests using registration with HttpsUrlConnection")
+public class RawHttpsRegistrationTests {
     // Different paths (contexts) the server supports and this client implements.
     private static final String CHAT = "chat";
     private static final String REGISTRATION = "registration";
