@@ -192,11 +192,11 @@ option you can use to see details of the comms between the client and the server
 If the server works with the client, your server should fulfill the requirements of the course, depending
 on the other requirements listed in the course project requrements and Server API requirements.
 
----
+## Executing unit tests with JUnit
 
-Note that the current version does not yet implement the `/test` command. That feature is still
-under construction. When it is implemented, you can use that to test the server with valid/invalid 
-requests to see if your server is robust enough.
+The project includes unit tests with JUnit. Necessary dependencies are in the `pom.xml` file.
+
+For instructions on how to execute the tests, see [TESTS-README.md](TESTS-README.md).
 
 ## More information
 

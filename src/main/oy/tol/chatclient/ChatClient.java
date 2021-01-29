@@ -28,7 +28,6 @@ public class ChatClient implements ChatClientDataProvider {
 	private static final String CMD_GET = "/get";
 	private static final String CMD_HELP = "/help";
 	private static final String CMD_INFO = "/info";
-	private static final String CMD_TEST = "/test";
 	private static final String CMD_EXIT = "/exit";
 
 	private static final int AUTO_FETCH_INTERVAL = 1000; // ms
@@ -117,9 +116,6 @@ public class ChatClient implements ChatClientDataProvider {
 			case CMD_INFO:
 				printInfo();
 				break;
-			case CMD_TEST:
-				doTests();
-				break;
 			case CMD_EXIT:
 				cancelAutoFetch();
 				running = false;
@@ -132,19 +128,6 @@ public class ChatClient implements ChatClientDataProvider {
 			}			
 		}
 		System.out.println("Bye!");
-	}
-	
-	/**
-	 * Does various tests to the server:
-	 * - registering
-	 * - logging in without registering
-	 * - getting chats (without if-modified-since, with it, logged in and not)
-	 * - posting chats (logged in and not)
-	 * - doing POST with empty or invalid JSON
-	 * - doing these in various speeds
-	 */
-	private void doTests() {
-		System.out.println("Not yet implemented! ");
 	}
 
 	/**
@@ -388,7 +371,6 @@ public class ChatClient implements ChatClientDataProvider {
 		System.out.println("/auto -- Toggles automatic /get in " + AUTO_FETCH_INTERVAL / 1000.0 + " sec intervals");
 		System.out.println("/help -- Prints out this information");
 		System.out.println("/info -- Prints out settings and user information");
-		System.out.println("/test -- Tests the server by automatically using the API");
 		System.out.println("/exit -- Exit the client app");
 		System.out.println(" > To chat, write a message and press enter to send a message.");
 	}
