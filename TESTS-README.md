@@ -8,13 +8,13 @@ If your VS Code does not have the necessary Extensions to test Java apps, see th
 
 ## Where are the tests?
 
-You can find the test source code files in src/test folder in your project.
+You can find the test source code files in `src/test` folder in your project.
 
 VS Code has a Test view you can select from the left side. The button reminds of a lab liquid bottle:
 
 ![VS Code Test View](vs-code-test-view.png)
 
-There you can see the tests.
+There you can see the tests. If not, use the Refresh button to refresh the view.
 
 ## How to configure the tests?
 
@@ -32,7 +32,7 @@ So before you run the tests, change these test configurations from both of the t
     // as instructed in the Preparing the client section (and video), and
     // Change the path of the client side certificate!
     private int serverVersion = 2;              // The exercise number you test
-    private String existingUser = "antti";      // Must be a user in your database already
+    private String existingUser = "antti";      // Must be a registered user in your server already
     private String existingPassword = "juu";    // Must be a valid password for the above user
     private String clientSideCertificate = "/Users/anttijuustila/workspace/O3/O3-chat-client/localhost.cer";
 ```
@@ -47,7 +47,9 @@ user in your server, and then use this username/password here.
 
 ## How to run the tests?
 
-After configuring the tests, you can run them. In the Test view, select the Run Tests button (triangle pointing right):
+Before using the tests, you obviously need to run the server.  After launching it, you can then execute the tests.
+
+Make sure you configured the tests (above). Then you can run them. In the Test view, select the Run Tests button (triangle pointing right):
 
 ![Running tests](vs-code-run-tests.png) 
 
