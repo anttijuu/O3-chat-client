@@ -12,15 +12,14 @@ import java.util.Timer;
 import java.util.TimerTask;
 
 /**
- * ChatClient is the console based UI for the ChatServer.
- * It profides the necessary functionality for chatting.
- * The actual comms with the ChatServer happens in the 
- * ChatHttpClient class.
+ * ChatClient is the console based UI for the ChatServer. It profides the
+ * necessary functionality for chatting. The actual comms with the ChatServer
+ * happens in the ChatHttpClient class.
  */
 public class ChatClient implements ChatClientDataProvider {
 
 	private static final String SERVER = "https://localhost:8001/";
-	private static final String CMD_SERVER	 = "/server";
+	private static final String CMD_SERVER = "/server";
 	private static final String CMD_REGISTER = "/register";
 	private static final String CMD_LOGIN = "/login";
 	private static final String CMD_NICK = "/nick";
@@ -31,23 +30,22 @@ public class ChatClient implements ChatClientDataProvider {
 	private static final String CMD_EXIT = "/exit";
 
 	private static final int AUTO_FETCH_INTERVAL = 1000; // ms
-	
-	private String currentServer = SERVER; 	// URL of the server without paths.
-	private String username = null;			// Registered & logged user.
-	private String password = null;			// The password in clear text.
-	private String email = null;			// Email address of user, needed for registering.
-	private String nick = null;				// Nickname, user can change the name visible in chats.
-	
-	private ChatHttpClient httpClient = null;	// Client handling the requests & responses.
-	
+
+	private String currentServer = SERVER; // URL of the server without paths.
+	private String username = null; // Registered & logged user.
+	private String password = null; // The password in clear text.
+	private String email = null; // Email address of user, needed for registering.
+	private String nick = null; // Nickname, user can change the name visible in chats.
+
+	private ChatHttpClient httpClient = null; // Client handling the requests & responses.
+
 	private boolean autoFetch = false;
 	private Timer autoFetchTimer = null;
-	
+
 	/**
-	 * 2: Exercise 2 testing
-	 * 3: Exercise 3 testing
-	 * 4: Exercise 4 - only internal server, no API changes, so not needed.
-	 * 5: HTTP If-Modified-Since and Modified-After support in client and server
+	 * 2: Exercise 2 testing 3: Exercise 3 testing 4: Exercise 4 - only internal
+	 * server, no API changes, so not needed. 5: HTTP If-Modified-Since and
+	 * Modified-After support in client and server
 	 */
 	private static int serverVersion = 2;
 
@@ -85,56 +83,60 @@ public class ChatClient implements ChatClientDataProvider {
 		}
 		boolean running = true;
 		while (running) {
-			System.out.print("O3-chat > ");
-			String command = console.readLine().trim();
-			switch (command) {
-			case CMD_SERVER:
-				changeServer(console);
-				break;
-			case CMD_REGISTER:
-				registerUser(console);
-				break;
-			case CMD_LOGIN:
-				getUserCredentials(console, false);
-				break;
-			case CMD_NICK:
-				getNick(console);
-				break;
-			case CMD_GET:
-				if (!autoFetch) {
-					if (getNewMessages() == 0) {
-						System.out.println("No new messages from server.");
-					}
+			try {
+				System.out.print("O3-chat > ");
+				String command = console.readLine().trim();
+				switch (command) {
+					case CMD_SERVER:
+						changeServer(console);
+						break;
+					case CMD_REGISTER:
+						registerUser(console);
+						break;
+					case CMD_LOGIN:
+						getUserCredentials(console, false);
+						break;
+					case CMD_NICK:
+						getNick(console);
+						break;
+					case CMD_GET:
+						if (!autoFetch) {
+							if (getNewMessages() == 0) {
+								System.out.println("No new messages from server.");
+							}
+						}
+						break;
+					case CMD_AUTO:
+						toggleAutoFetch();
+						break;
+					case CMD_HELP:
+						printCommands();
+						break;
+					case CMD_INFO:
+						printInfo();
+						break;
+					case CMD_EXIT:
+						cancelAutoFetch();
+						running = false;
+						break;
+					default:
+						if (command.length() > 0 && !command.startsWith("/")) {
+							postMessage(command);
+						}
+						break;
 				}
-				break;
-			case CMD_AUTO:
-				toggleAutoFetch();
-				break;
-			case CMD_HELP:
-				printCommands();
-				break;
-			case CMD_INFO:
-				printInfo();
-				break;
-			case CMD_EXIT:
-				cancelAutoFetch();
-				running = false;
-				break;
-			default:
-				if (command.length() > 0 && !command.startsWith("/")) {
-					postMessage(command);
-				}
-				break;
-			}			
+			} catch (Exception e) {
+				System.out.println(e.getMessage());
+				e.printStackTrace();
+			}
 		}
 		System.out.println("Bye!");
 	}
 
 	/**
-	 * Toggles autofetch on and off.
-	 * When autofetch is on, client fetches new chat messages peridically.
-	 * Requires that user has logged in. In case of errors, autofetch
-	 * may be switched off (see calls to cancelAutoFetch).
+	 * Toggles autofetch on and off. When autofetch is on, client fetches new chat
+	 * messages peridically. Requires that user has logged in. In case of errors,
+	 * autofetch may be switched off (see calls to cancelAutoFetch).
 	 */
 	private void toggleAutoFetch() {
 		if (null == username) {
@@ -189,9 +191,8 @@ public class ChatClient implements ChatClientDataProvider {
 	}
 
 	/**
-	 * Handles the server address change command.
-	 * When server address is changed, username and password
-	 * must be given again (register and/or login).
+	 * Handles the server address change command. When server address is changed,
+	 * username and password must be given again (register and/or login).
 	 */
 	private void changeServer(Console console) {
 		System.out.print("Enter server address > ");
@@ -211,15 +212,17 @@ public class ChatClient implements ChatClientDataProvider {
 		}
 		System.out.println("Server in use is " + currentServer);
 	}
-	
+
 	/**
-	 * Get user credentials from console (i.e. login or register).
-	 * Registering a new user actually communicates with the server.
-	 * When logging in, user enters the credentials (username & password),
-	 * but no comms with server happens until user actually either retrieves
-	 * new chat messages from the server or posts a new chat message.
-	 * @param console The console for the UI
-	 * @param forRegistering If true, asks all registration data, otherwise just login data.
+	 * Get user credentials from console (i.e. login or register). Registering a new
+	 * user actually communicates with the server. When logging in, user enters the
+	 * credentials (username & password), but no comms with server happens until
+	 * user actually either retrieves new chat messages from the server or posts a
+	 * new chat message.
+	 * 
+	 * @param console        The console for the UI
+	 * @param forRegistering If true, asks all registration data, otherwise just
+	 *                       login data.
 	 */
 	private void getUserCredentials(Console console, boolean forRegistering) {
 		System.out.print("Enter username > ");
@@ -232,7 +235,7 @@ public class ChatClient implements ChatClientDataProvider {
 			nick = username;
 		}
 		System.out.print("Enter password > ");
-		char [] newPassword = console.readPassword();
+		char[] newPassword = console.readPassword();
 		if (newPassword.length > 0) {
 			password = new String(newPassword);
 		}
@@ -246,9 +249,10 @@ public class ChatClient implements ChatClientDataProvider {
 			getNewMessages();
 		}
 	}
-	
+
 	/**
 	 * User wants to change the nick, so ask it.
+	 * 
 	 * @param console
 	 */
 	private void getNick(Console console) {
@@ -258,11 +262,12 @@ public class ChatClient implements ChatClientDataProvider {
 			nick = newNick;
 		}
 	}
-	
+
 	/**
-	 * Handles the registration of the user with the server.
-	 * All credentials (username, email and password) must be given.
-	 * User is then registered with the server.
+	 * Handles the registration of the user with the server. All credentials
+	 * (username, email and password) must be given. User is then registered with
+	 * the server.
+	 * 
 	 * @param console
 	 */
 	private void registerUser(Console console) {
@@ -281,7 +286,8 @@ public class ChatClient implements ChatClientDataProvider {
 				System.out.println("Failed to register!");
 				System.out.println("Error from server: " + response + " " + httpClient.getServerNotification());
 			}
-		} catch (KeyManagementException | KeyStoreException | CertificateException | NoSuchAlgorithmException | FileNotFoundException e) {
+		} catch (KeyManagementException | KeyStoreException | CertificateException | NoSuchAlgorithmException
+				| FileNotFoundException e) {
 			System.out.println(" **** ERROR in server certificate");
 			System.out.println(e.getLocalizedMessage());
 		} catch (IOException e) {
@@ -291,15 +297,15 @@ public class ChatClient implements ChatClientDataProvider {
 	}
 
 	/**
-	 * Fetches new chat messages from the server.
-	 * User must be logged in.
+	 * Fetches new chat messages from the server. User must be logged in.
+	 * 
 	 * @return The count of new messages from server.
 	 */
 	private int getNewMessages() {
 		int count = 0;
 		try {
 			if (null != username) {
-				int response = httpClient.getChatMessages();		
+				int response = httpClient.getChatMessages();
 				if (response >= 200 || response < 300) {
 					if (serverVersion >= 3) {
 						List<ChatMessage> messages = httpClient.getNewMessages();
@@ -313,7 +319,7 @@ public class ChatClient implements ChatClientDataProvider {
 						List<String> messages = httpClient.getPlainStringMessages();
 						if (null != messages) {
 							count = messages.size();
-							for (String message: messages) {
+							for (String message : messages) {
 								System.out.println(message);
 							}
 						}
@@ -324,7 +330,8 @@ public class ChatClient implements ChatClientDataProvider {
 			} else {
 				System.out.println("Not yet registered or logged in!");
 			}
-		} catch (KeyManagementException | KeyStoreException | CertificateException | NoSuchAlgorithmException | FileNotFoundException e) {
+		} catch (KeyManagementException | KeyStoreException | CertificateException | NoSuchAlgorithmException
+				| FileNotFoundException e) {
 			System.out.println(" **** ERROR in server certificate");
 			System.out.println(e.getLocalizedMessage());
 		} catch (IOException e) {
@@ -333,10 +340,10 @@ public class ChatClient implements ChatClientDataProvider {
 		}
 		return count;
 	}
-	
+
 	/**
-	 * Sends a new chat message to the server.
-	 * User must be logged in to the server.
+	 * Sends a new chat message to the server. User must be logged in to the server.
+	 * 
 	 * @param message The chat message to send.
 	 */
 	private void postMessage(String message) {
@@ -346,7 +353,8 @@ public class ChatClient implements ChatClientDataProvider {
 				if (response < 200 || response >= 300) {
 					System.out.println("Error from server: " + response + " " + httpClient.getServerNotification());
 				}
-			} catch (KeyManagementException | KeyStoreException | CertificateException | NoSuchAlgorithmException | FileNotFoundException e) {
+			} catch (KeyManagementException | KeyStoreException | CertificateException | NoSuchAlgorithmException
+					| FileNotFoundException e) {
 				System.out.println(" **** ERROR in server certificate");
 				System.out.println(e.getLocalizedMessage());
 			} catch (IOException e) {
@@ -357,7 +365,7 @@ public class ChatClient implements ChatClientDataProvider {
 			System.out.println("Must register/login to server before posting messages!");
 		}
 	}
-	
+
 	/**
 	 * Print out the available commands.
 	 */
@@ -385,12 +393,12 @@ public class ChatClient implements ChatClientDataProvider {
 		System.out.println("Nick: " + nick);
 		System.out.println("Autofetch is " + (autoFetch ? "on" : "off"));
 	}
-	
-	/* 
-	 Implementation of the ChatClientDataProvider interface.
-	 The ChatHttpClient calls these methods to get configuration info
-	 needed in communication with the server.
-	*/
+
+	/*
+	 * Implementation of the ChatClientDataProvider interface. The ChatHttpClient
+	 * calls these methods to get configuration info needed in communication with
+	 * the server.
+	 */
 
 	@Override
 	public String getServer() {
@@ -421,5 +429,5 @@ public class ChatClient implements ChatClientDataProvider {
 	public int getServerVersion() {
 		return serverVersion;
 	}
-	
+
 }

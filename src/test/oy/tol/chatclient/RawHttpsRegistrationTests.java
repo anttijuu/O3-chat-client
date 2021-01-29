@@ -51,7 +51,7 @@ public class RawHttpsRegistrationTests {
     // Also retrieve the server client side certificate and save it to a file
     // as instructed in the Preparing the client section (and video), and
     // Change the path of the client side certificate!
-    private int serverVersion = 2;              // The exercise number you test
+    private int serverVersion = 5;              // The exercise number you test
     private String clientSideCertificate = "/Users/anttijuustila/workspace/O3/O3-chat-client/localhost.cer";
 
     @Test

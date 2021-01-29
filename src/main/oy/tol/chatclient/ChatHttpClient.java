@@ -82,6 +82,9 @@ public class ChatHttpClient {
 		URL url = new URL(addr);
 
 		HttpsURLConnection connection = createTrustingConnectionDebug(url);
+		connection.setUseCaches(false);
+		connection.setDefaultUseCaches(false);
+		connection.setRequestProperty("Cache-Control", "no-cache");
 
 		connection.setRequestMethod("GET");
 		if (dataProvider.getServerVersion() >= 3) {
@@ -140,7 +143,7 @@ public class ChatHttpClient {
 			newMessages = null;
 			plainStringMessages = null;
 			BufferedReader in = new BufferedReader(
-					new InputStreamReader(connection.getErrorStream(), StandardCharsets.UTF_8));
+					new InputStreamReader(connection.getInputStream(), StandardCharsets.UTF_8));
 			String inputLine;
 			while ((inputLine = in.readLine()) != null) {
 				serverNotification += " " + inputLine;
