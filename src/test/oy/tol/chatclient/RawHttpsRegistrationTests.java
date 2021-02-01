@@ -41,18 +41,10 @@ import org.junit.jupiter.api.TestMethodOrder;
 @DisplayName("Tests using registration with HttpsUrlConnection")
 public class RawHttpsRegistrationTests {
     // Different paths (contexts) the server supports and this client implements.
-    private static final String CHAT = "chat";
     private static final String REGISTRATION = "registration";
     private static final int CONNECT_TIMEOUT = 10 * 1000;
     private static final int REQUEST_TIMEOUT = 30 * 1000;
     String serverAddr = "https://localhost:8001/";
-
-    // TODO: Change these for your setup!
-    // Also retrieve the server client side certificate and save it to a file
-    // as instructed in the Preparing the client section (and video), and
-    // Change the path of the client side certificate!
-    private int serverVersion = 5;              // The exercise number you test
-    private String clientSideCertificate = "/Users/anttijuustila/workspace/O3/O3-chat-client/localhost.cer";
 
     @Test
     @DisplayName("Testing registration with empty strings")
@@ -99,7 +91,7 @@ public class RawHttpsRegistrationTests {
             String invalid = "";
             int status = registerWithInvalidContent(invalid);
             assertTrue(status >= 400, () -> "Server should return error 4xx.");
-            if (serverVersion >= 3) {
+            if (ChatUnitTestSettings.serverVersion >= 3) {
                 invalid =  "{ \"diiipa\" : \"daapa\" }";
                 status = registerWithInvalidContent(invalid);
                 assertTrue(status >= 400, () -> "Server should return error 4xx.");
@@ -134,7 +126,7 @@ public class RawHttpsRegistrationTests {
 		HttpsURLConnection connection = createTrustingConnectionDebug(url);
 
 		byte[] msgBytes  = invalidRegistrationString.getBytes(StandardCharsets.UTF_8);
-		if (serverVersion >= 3) {
+		if (ChatUnitTestSettings.serverVersion >= 3) {
 			connection.setRequestProperty("Content-Type", "application/json");
 		} else {
 			connection.setRequestProperty("Content-Type", "text/plain");
@@ -177,7 +169,7 @@ public class RawHttpsRegistrationTests {
 		HttpsURLConnection connection = createTrustingConnectionDebug(url);
 
 		byte[] msgBytes;
-		if (serverVersion >= 3) {
+		if (ChatUnitTestSettings.serverVersion >= 3) {
 			JSONObject registrationMsg = new JSONObject();
 			registrationMsg.put("username", withUsername);
 			registrationMsg.put("password", withPassword);
@@ -220,7 +212,7 @@ public class RawHttpsRegistrationTests {
     private HttpsURLConnection createTrustingConnectionDebug(URL url) throws KeyStoreException, CertificateException,
             NoSuchAlgorithmException, FileNotFoundException, KeyManagementException, IOException {
         Certificate certificate = CertificateFactory.getInstance("X.509")
-                .generateCertificate(new FileInputStream(clientSideCertificate));
+                .generateCertificate(new FileInputStream(ChatUnitTestSettings.clientSideCertificate));
 
         KeyStore keyStore = KeyStore.getInstance("JKS");
         keyStore.load(null, null);

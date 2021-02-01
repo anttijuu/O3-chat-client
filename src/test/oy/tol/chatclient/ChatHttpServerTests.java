@@ -27,17 +27,9 @@ public class ChatHttpServerTests implements ChatClientDataProvider {
     private String username = null;
     private String password = null;
     private String email = null;
-    // TODO: Change these for your setup!
-    // Also retrieve the server client side certificate and save it to a file
-    // as instructed in the Preparing the client section (and video), and
-    // Change the path of the client side certificate!
-    private int serverVersion = 5;              // The exercise number you test
-    private String existingUser = "antti";      // Must be a user in your database already
-    private String existingPassword = "juustila";    // Must be a valid password for the above user
-    private String clientSideCertificate = "/Users/anttijuustila/workspace/O3/O3-chat-client/localhost.cer";
 
     ChatHttpServerTests() {
-        httpClient = new ChatHttpClient(this, clientSideCertificate);
+        httpClient = new ChatHttpClient(this, ChatUnitTestSettings.clientSideCertificate);
     }
 
     @Test 
@@ -75,8 +67,8 @@ public class ChatHttpServerTests implements ChatClientDataProvider {
     @DisplayName("Testing getting messages from server")
     void testGetMessages() {
         try {
-            username = existingUser;
-            password = existingPassword;
+            username = ChatUnitTestSettings.existingUser;
+            password = ChatUnitTestSettings.existingPassword;
             int result = httpClient.getChatMessages();
             assertTrue(result == 200 || result == 204, () -> "Must get 200 or 204 from server");
 		} catch (Exception e) {
@@ -88,8 +80,8 @@ public class ChatHttpServerTests implements ChatClientDataProvider {
     @DisplayName("Testing posting empty messages to server")
     void testPostEmptyMessages() {
         try {
-            username = existingUser;
-            password = existingPassword;
+            username = ChatUnitTestSettings.existingUser;
+            password = ChatUnitTestSettings.existingPassword;
             String message = "";
             int result = httpClient.postChatMessage(message);
             assertTrue(result >= 400, () -> "Must get error from server");
@@ -102,8 +94,8 @@ public class ChatHttpServerTests implements ChatClientDataProvider {
     @DisplayName("Testing posting whitespace messages to server")
     void testPostWhitespaceMessages() {
         try {
-            username = existingUser;
-            password = existingPassword;
+            username = ChatUnitTestSettings.existingUser;
+            password = ChatUnitTestSettings.existingPassword;
             String message = "    ";
             int result = httpClient.postChatMessage(message);
             assertTrue(result >= 400, () -> "Must get error from server");
@@ -117,8 +109,8 @@ public class ChatHttpServerTests implements ChatClientDataProvider {
     @DisplayName("Testing posting messages to server")
     void testPostMessages() {
         try {
-            username = existingUser;
-            password = existingPassword;
+            username = ChatUnitTestSettings.existingUser;
+            password = ChatUnitTestSettings.existingPassword;
             String message = randomString(120);
             int result = httpClient.postChatMessage(message);
             assertTrue(result == 200, () -> "Must get 200 from server");
@@ -133,8 +125,8 @@ public class ChatHttpServerTests implements ChatClientDataProvider {
     void testHeavyGetPostMessages() {
         try {
             // Must be an existing user in the database.
-            username = existingUser;
-            password = existingPassword;
+            username = ChatUnitTestSettings.existingUser;
+            password = ChatUnitTestSettings.existingPassword;
             final int MSGS_TO_ADD = 10;
             final int LOOPS_TO_RUN = 10;
             int loop = LOOPS_TO_RUN;
@@ -184,7 +176,7 @@ public class ChatHttpServerTests implements ChatClientDataProvider {
 
 	@Override
 	public int getServerVersion() {
-		return serverVersion;
+		return ChatUnitTestSettings.serverVersion;
 	}
 
     private String randomString(int length) {

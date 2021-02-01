@@ -1,6 +1,6 @@
 # Using the ChatClient JUnit tests
 
-The necessary components needed to run JUnit tests are already included in the `pom.xml` of the project.
+The necessary dependent components needed to run JUnit tests are already included in the `pom.xml` of the project.
 
 If your VS Code does not have the necessary Extensions to test Java apps, see this VS Code help page:
 
@@ -19,25 +19,26 @@ There you can see the tests. If not, use the Refresh button to refresh the view.
 ## How to configure the tests?
 
 Tests are designed to work with different versions of your server. When you finish exercise 2, for example,
-you can test it by changing the server version to `2` in both of the tests.
+you can test it by changing the server version to `2`.
 
 Also you need to provide the tests the same client side certificate file that you must give to the actual
 ChatClient app. See instructions in [README.md](README.md) on how to do that.
 
-So before you run the tests, change these test configurations from both of the test Java files:
+So before you run the tests, change these test configurations from the `ChatUnitTestSettings.java`:
 
 ```Java
+public class ChatUnitTestSettings {
     // TODO: Change these for your setup!
     // Also retrieve the server client side certificate and save it to a file
     // as instructed in the Preparing the client section (and video), and
-    // Change the path of the client side certificate!
-    private int serverVersion = 2;              // The exercise number you test
-    private String existingUser = "antti";      // Must be a registered user in your server already
-    private String existingPassword = "juu";    // Must be a valid password for the above user
-    private String clientSideCertificate = "/Users/anttijuustila/workspace/O3/O3-chat-client/localhost.cer";
-```
+    // Change the path & filename here of the client side certificate!
+    public static final String clientSideCertificate = "/Users/anttijuustila/workspace/O3/O3-chat-client/localhost.cer";
+    public static final int serverVersion = 3;
+    public static final String existingUser = "antti";           // Must be a user in your database already
+    public static final String existingPassword = "juustila";    // Must be a valid password for the above user
+}```
 
-Where
+Where:
 
 * `serverVersion` is the number of the exercise you are testing. If you have just finished exercise 2, this should be 2. When 
 you have finished exercise 3, change this number to 3 in *both* of the test Java files.

@@ -47,7 +47,7 @@ public class ChatClient implements ChatClientDataProvider {
 	 * server, no API changes, so not needed. 5: HTTP If-Modified-Since and
 	 * Modified-After support in client and server
 	 */
-	private static int serverVersion = 2;
+	public static int serverVersion = 2;
 
 	public static void main(String[] args) {
 		// Run the client.
