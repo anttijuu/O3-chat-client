@@ -34,9 +34,12 @@ public class ChatUnitTestSettings {
     // Change the path & filename here of the client side certificate!
     public static final String clientSideCertificate = "/Users/anttijuustila/workspace/O3/O3-chat-client/localhost.cer";
     public static final int serverVersion = 3;
-    public static final String existingUser = "antti";           // Must be a user in your database already
-    public static final String existingPassword = "juustila";    // Must be a valid password for the above user
-}```
+    // Must be a user in your database already
+    public static final String existingUser = "antti";
+    // Must be a valid password for the above user
+    public static final String existingPassword = "juustila";
+}
+```
 
 Where:
 
