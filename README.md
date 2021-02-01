@@ -18,7 +18,9 @@ those below.
 
 [This demo video](https://youtu.be/FgANceteues) walks you through 1) how to get the code, 
 2) build it, 3) prepare the client with the self-signed certificate and 4) run it 
-either from the command line or from VS Code.
+either from the command line or from VS Code. Note that since the video was made, JUnit
+tests were added to the project. This changes how to build the client from the command line.
+See instructions below from section *Building the client*.
 
 ## Background
 
@@ -47,6 +49,7 @@ The following are needed to build and run the client:
 * JDK 15
 * Maven
 * JSON library (see details from `pom.xml`)
+* JUnit and related components
 * An IDE if you wish to view and/or edit the code.
 
 The client app is structured as described in this high level UML class diagram:
@@ -64,9 +67,15 @@ Note that not all details of the implementation are visible in this diagram.
 
 Build the client from command line:
 
-`mvn package`
+`mvn install -DskipTests`
 
 You should then have a subdirectory `target` including .jar files for running the client.
+
+If you do not have a working server running -- the usual `mvn package` also executes tests,
+and if they do not pass, the .jar file is not left in the target directory.
+
+When your server *is* running and you wish to build the client *and* execute the test from the command line, do
+`mvn package`. 
 
 If there are errors, check out the error output and sort out the issues.
 

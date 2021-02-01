@@ -6,6 +6,8 @@ If your VS Code does not have the necessary Extensions to test Java apps, see th
 
 [https://code.visualstudio.com/docs/java/java-testing](https://code.visualstudio.com/docs/java/java-testing)
 
+For an overview of the testing using VS Code, see [this video](https://youtu.be/ZO2aJSiDRSw) (Finnish only).
+
 ## Where are the tests?
 
 You can find the test source code files in `src/test` folder in your project.
@@ -53,7 +55,10 @@ user in your server, and then use this username/password here.
 
 Before using the tests, you obviously need to run the server.  After launching it, you can then execute the tests.
 
-Make sure you configured the tests (above). Then you can run them. In the Test view, select the Run Tests button (triangle pointing right):
+Make sure you configured the tests (above). Then you can run them. From command line, `mvn package` builds the client
+*and* executes the tests too.
+
+In Visual Studio Code, select the Test view, then select the Run Tests button (triangle pointing right):
 
 ![Running tests](vs-code-run-tests.png) 
 
