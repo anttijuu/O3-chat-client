@@ -11,6 +11,9 @@ import java.util.List;
 import java.util.Timer;
 import java.util.TimerTask;
 
+import com.diogonunes.jcolor.Ansi;
+import com.diogonunes.jcolor.Attribute;
+
 /**
  * ChatClient is the console based UI for the ChatServer. It profides the
  * necessary functionality for chatting. The actual comms with the ChatServer
@@ -41,6 +44,12 @@ public class ChatClient implements ChatClientDataProvider {
 
 	private boolean autoFetch = false;
 	private Timer autoFetchTimer = null;
+	private boolean useColorOutput = false;
+
+	static final Attribute colorDate = Attribute.GREEN_TEXT();
+	static final Attribute colorNick = Attribute.BLUE_TEXT();
+	static final Attribute colorMsg = Attribute.CYAN_TEXT();
+	static final Attribute colorError = Attribute.BRIGHT_RED_TEXT();
 
 	/**
 	 * 2: Exercise 2 testing 3: Exercise 3 testing 4: Exercise 4 - only internal
@@ -126,7 +135,7 @@ public class ChatClient implements ChatClientDataProvider {
 						break;
 				}
 			} catch (Exception e) {
-				System.out.println(e.getMessage());
+				System.out.println(Ansi.colorize(" *** ERROR : " + e.getMessage(),colorError));
 				e.printStackTrace();
 			}
 		}
@@ -288,11 +297,11 @@ public class ChatClient implements ChatClientDataProvider {
 			}
 		} catch (KeyManagementException | KeyStoreException | CertificateException | NoSuchAlgorithmException
 				| FileNotFoundException e) {
-			System.out.println(" **** ERROR in server certificate");
-			System.out.println(e.getLocalizedMessage());
-		} catch (IOException e) {
-			System.out.println(" **** ERROR in user registration with server " + currentServer);
-			System.out.println(e.getLocalizedMessage());
+			System.out.println(Ansi.colorize(" **** ERROR in server certificate", colorError));
+			System.out.println(Ansi.colorize(e.getLocalizedMessage(),colorError));
+		} catch (Exception e) {
+			System.out.println(Ansi.colorize(" **** ERROR in user registration with server " + currentServer, colorError));
+			System.out.println(Ansi.colorize(e.getLocalizedMessage(),colorError));
 		}
 	}
 
@@ -312,7 +321,11 @@ public class ChatClient implements ChatClientDataProvider {
 						if (null != messages) {
 							count = messages.size();
 							for (ChatMessage message : messages) {
-								System.out.println(message);
+								System.out.print(Ansi.colorize(message.sentAsString(), colorDate));
+								System.out.print(" ");
+								System.out.print(Ansi.colorize(message.nick, colorNick));
+								System.out.print(" ");
+								System.out.println(Ansi.colorize(message.message, colorMsg));
 							}
 						}
 					} else {
@@ -325,17 +338,17 @@ public class ChatClient implements ChatClientDataProvider {
 						}
 					}
 				} else {
-					System.out.println("Error from server: " + response + " " + httpClient.getServerNotification());
+					System.out.println(Ansi.colorize(" **** Error from server: " + response + " " + httpClient.getServerNotification(), colorError));
 				}
 			} else {
 				System.out.println("Not yet registered or logged in!");
 			}
 		} catch (KeyManagementException | KeyStoreException | CertificateException | NoSuchAlgorithmException
 				| FileNotFoundException e) {
-			System.out.println(" **** ERROR in server certificate");
+			System.out.println(Ansi.colorize(" **** ERROR in server certificate",colorError));
 			System.out.println(e.getLocalizedMessage());
 		} catch (IOException e) {
-			System.out.println(" **** ERROR in getting messages from server " + currentServer);
+			System.out.println(Ansi.colorize(" **** ERROR in getting messages from server " + currentServer,colorError));
 			System.out.println(e.getLocalizedMessage());
 		}
 		return count;
@@ -351,14 +364,14 @@ public class ChatClient implements ChatClientDataProvider {
 			try {
 				int response = httpClient.postChatMessage(message);
 				if (response < 200 || response >= 300) {
-					System.out.println("Error from server: " + response + " " + httpClient.getServerNotification());
+					System.out.println(Ansi.colorize("Error from server: " + response + " " + httpClient.getServerNotification(),colorError));
 				}
 			} catch (KeyManagementException | KeyStoreException | CertificateException | NoSuchAlgorithmException
 					| FileNotFoundException e) {
-				System.out.println(" **** ERROR in server certificate");
+				System.out.println(Ansi.colorize(" **** ERROR in server certificate",colorError));
 				System.out.println(e.getLocalizedMessage());
 			} catch (IOException e) {
-				System.out.println(" **** ERROR in posting message to server " + currentServer);
+				System.out.println(Ansi.colorize(" **** ERROR in posting message to server " + currentServer,colorError));
 				System.out.println(e.getLocalizedMessage());
 			}
 		} else {

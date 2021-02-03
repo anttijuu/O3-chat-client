@@ -73,5 +73,10 @@
 			<artifactId>json</artifactId>
 			<version>20201115</version>
 		</dependency>
+		<dependency>
+			<groupId>com.diogonunes</groupId>
+			<artifactId>JColor</artifactId>
+			<version>5.0.1</version>
+		</dependency>
 	</dependencies>
 </project>
