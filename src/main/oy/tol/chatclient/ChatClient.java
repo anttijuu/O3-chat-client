@@ -58,7 +58,7 @@ public class ChatClient implements ChatClientDataProvider {
 	 * server, no API changes, so not needed. 5: HTTP If-Modified-Since and
 	 * Modified-After support in client and server
 	 */
-	public static int serverVersion = 2;
+	public static int serverVersion = 3;
 
 	public static void main(String[] args) {
 		// Run the client.
@@ -210,7 +210,7 @@ public class ChatClient implements ChatClientDataProvider {
 	 * username and password must be given again (register and/or login).
 	 */
 	private void changeServer(Console console) {
-		print("Enter server address > ", colorInfo;
+		print("Enter server address > ", colorInfo);
 		String newServer = console.readLine().trim();
 		if (newServer.length() > 0) {
 			print("Change server from " + currentServer + " to " + newServer + "Y/n? > ", colorInfo);
@@ -390,15 +390,16 @@ public class ChatClient implements ChatClientDataProvider {
 	 */
 	private void printCommands() {
 		println("--- O3 Chat Client Commands ---", colorInfo);
-		println("/server -- Change the server", colorInfo);
+		println("/server    -- Change the server", colorInfo);
 		println("/register  -- Register as a new user in server", colorInfo);
-		println("/login -- Login using already registered credentials", colorInfo);
-		println("/nick -- Specify a nickname to use in chat server", colorInfo);
-		println("/get -- Get new messages from server", colorInfo);
-		println("/auto -- Toggles automatic /get in " + AUTO_FETCH_INTERVAL / 1000.0 + " sec intervals", colorInfo);
-		println("/help -- Prints out this information", colorInfo);
-		println("/info -- Prints out settings and user information", colorInfo);
-		println("/exit -- Exit the client app", colorInfo);
+		println("/login     -- Login using already registered credentials", colorInfo);
+		println("/nick      -- Specify a nickname to use in chat server", colorInfo);
+		println("/get       -- Get new messages from server", colorInfo);
+		println("/auto      -- Toggles automatic /get in " + AUTO_FETCH_INTERVAL / 1000.0 + " sec intervals", colorInfo);
+		println("/color     -- Toggles color output on/off", colorInfo);
+		println("/help      -- Prints out this information", colorInfo);
+		println("/info      -- Prints out settings and user information", colorInfo);
+		println("/exit      -- Exit the client app", colorInfo);
 		println(" > To chat, write a message and press enter to send a message.", colorInfo);
 	}
 
