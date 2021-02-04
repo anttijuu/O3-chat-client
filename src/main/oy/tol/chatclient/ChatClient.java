@@ -194,7 +194,7 @@ public class ChatClient implements ChatClientDataProvider {
 							cancel();
 						} else if (getNewMessages() > 0) {
 							// Neet to print the prompt after printing messages.
-							System.out.print("O3-chat > ");
+							print("O3-chat > ", colorInfo);
 						}
 					}
 				}, AUTO_FETCH_INTERVAL, AUTO_FETCH_INTERVAL);
