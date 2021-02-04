@@ -9,5 +9,6 @@ public class ChatUnitTestSettings {
     public static final int serverVersion = 3;
     public static final String existingUser = "antti";           // Must be a user in your database already
     public static final String existingPassword = "juustila";    // Must be a valid password for the above user
-
+    public static final String existingUser2 = "aristoteles";    // Same as above
+    public static final String existingPassword2 = "pythagoras"; // Same as above
 }

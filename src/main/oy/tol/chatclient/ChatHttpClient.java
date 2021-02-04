@@ -72,7 +72,7 @@ public class ChatHttpClient {
 		return plainStringMessages;
 	}
 
-	public int getChatMessages() throws KeyManagementException, KeyStoreException, CertificateException,
+	public synchronized int getChatMessages() throws KeyManagementException, KeyStoreException, CertificateException,
 			NoSuchAlgorithmException, IOException {
 		String addr = dataProvider.getServer();
 		if (!addr.endsWith("/")) {
@@ -153,7 +153,7 @@ public class ChatHttpClient {
 		return responseCode;
 	}
 
-	public int postChatMessage(String message) throws KeyManagementException, KeyStoreException, CertificateException,
+	public synchronized int postChatMessage(String message) throws KeyManagementException, KeyStoreException, CertificateException,
 			NoSuchAlgorithmException, IOException {
 		String addr = dataProvider.getServer();
 		if (!addr.endsWith("/")) {
@@ -208,7 +208,7 @@ public class ChatHttpClient {
 		return responseCode;
 	}
 
-	public int registerUser() throws KeyManagementException, KeyStoreException, CertificateException,
+	public synchronized int registerUser() throws KeyManagementException, KeyStoreException, CertificateException,
 			NoSuchAlgorithmException, IOException {
 		String addr = dataProvider.getServer();
 		if (!addr.endsWith("/")) {
