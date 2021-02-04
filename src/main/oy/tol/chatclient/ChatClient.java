@@ -27,6 +27,7 @@ public class ChatClient implements ChatClientDataProvider {
 	private static final String CMD_LOGIN = "/login";
 	private static final String CMD_NICK = "/nick";
 	private static final String CMD_AUTO = "/auto";
+	private static final String CMD_COLOR = "/color";
 	private static final String CMD_GET = "/get";
 	private static final String CMD_HELP = "/help";
 	private static final String CMD_INFO = "/info";
@@ -47,9 +48,10 @@ public class ChatClient implements ChatClientDataProvider {
 	private boolean useColorOutput = false;
 
 	static final Attribute colorDate = Attribute.GREEN_TEXT();
-	static final Attribute colorNick = Attribute.BLUE_TEXT();
+	static final Attribute colorNick = Attribute.BRIGHT_BLUE_TEXT();
 	static final Attribute colorMsg = Attribute.CYAN_TEXT();
 	static final Attribute colorError = Attribute.BRIGHT_RED_TEXT();
+	static final Attribute colorInfo = Attribute.YELLOW_TEXT();
 
 	/**
 	 * 2: Exercise 2 testing 3: Exercise 3 testing 4: Exercise 4 - only internal
@@ -88,12 +90,12 @@ public class ChatClient implements ChatClientDataProvider {
 		printInfo();
 		Console console = System.console();
 		if (null == username) {
-			System.out.println("!! Register or login to server first.");
+			println("!! Register or login to server first.", colorInfo);
 		}
 		boolean running = true;
 		while (running) {
 			try {
-				System.out.print("O3-chat > ");
+				print("O3-chat > ", colorInfo);
 				String command = console.readLine().trim();
 				switch (command) {
 					case CMD_SERVER:
@@ -111,12 +113,16 @@ public class ChatClient implements ChatClientDataProvider {
 					case CMD_GET:
 						if (!autoFetch) {
 							if (getNewMessages() == 0) {
-								System.out.println("No new messages from server.");
+								println("No new messages from server.", colorInfo);
 							}
 						}
 						break;
 					case CMD_AUTO:
 						toggleAutoFetch();
+						break;
+					case CMD_COLOR:
+						useColorOutput = !useColorOutput;
+						println("Using color in output: " + (useColorOutput ? "yes" : "no"), colorInfo);
 						break;
 					case CMD_HELP:
 						printCommands();
@@ -135,11 +141,11 @@ public class ChatClient implements ChatClientDataProvider {
 						break;
 				}
 			} catch (Exception e) {
-				System.out.println(Ansi.colorize(" *** ERROR : " + e.getMessage(),colorError));
+				println(" *** ERROR : " + e.getMessage(),colorError);
 				e.printStackTrace();
 			}
 		}
-		System.out.println("Bye!");
+		println("Bye!", colorInfo);
 	}
 
 	/**
@@ -149,7 +155,7 @@ public class ChatClient implements ChatClientDataProvider {
 	 */
 	private void toggleAutoFetch() {
 		if (null == username) {
-			System.out.println("Login first to fetch messages");
+			println("Login first to fetch messages", colorInfo);
 			return;
 		}
 		autoFetch = !autoFetch;
@@ -193,7 +199,7 @@ public class ChatClient implements ChatClientDataProvider {
 					}
 				}, AUTO_FETCH_INTERVAL, AUTO_FETCH_INTERVAL);
 			} catch (IllegalArgumentException | IllegalStateException | NullPointerException e) {
-				System.out.println(" **** Faulty timer usage: " + e.getLocalizedMessage());
+				println(" **** Faulty timer usage: " + e.getLocalizedMessage(), colorError);
 				autoFetch = false;
 			}
 		}
@@ -204,10 +210,10 @@ public class ChatClient implements ChatClientDataProvider {
 	 * username and password must be given again (register and/or login).
 	 */
 	private void changeServer(Console console) {
-		System.out.print("Enter server address > ");
+		print("Enter server address > ", colorInfo;
 		String newServer = console.readLine().trim();
 		if (newServer.length() > 0) {
-			System.out.print("Change server from " + currentServer + " to " + newServer + "Y/n? > ");
+			print("Change server from " + currentServer + " to " + newServer + "Y/n? > ", colorInfo);
 			String confirmation = console.readLine().trim();
 			if (confirmation.length() == 0 || confirmation.equalsIgnoreCase("Y")) {
 				// Need to cancel autofetch since must register/login first.
@@ -216,10 +222,10 @@ public class ChatClient implements ChatClientDataProvider {
 				username = null;
 				nick = null;
 				password = null;
-				System.out.println("Remember to register and/or login to the new server!");
+				println("Remember to register and/or login to the new server!", colorInfo);
 			}
 		}
-		System.out.println("Server in use is " + currentServer);
+		println("Server in use is " + currentServer, colorInfo);
 	}
 
 	/**
@@ -234,7 +240,7 @@ public class ChatClient implements ChatClientDataProvider {
 	 *                       login data.
 	 */
 	private void getUserCredentials(Console console, boolean forRegistering) {
-		System.out.print("Enter username > ");
+		print("Enter username > ", colorInfo);
 		String newUsername = console.readLine().trim();
 		if (newUsername.length() > 0) {
 			// Need to cancel autofetch since username/pw not usable anymore
@@ -243,13 +249,13 @@ public class ChatClient implements ChatClientDataProvider {
 			username = newUsername;
 			nick = username;
 		}
-		System.out.print("Enter password > ");
+		print("Enter password > ", colorInfo);
 		char[] newPassword = console.readPassword();
 		if (newPassword.length > 0) {
 			password = new String(newPassword);
 		}
 		if (forRegistering) {
-			System.out.print("Enter email > ");
+			print("Enter email > ", colorInfo);
 			String newEmail = console.readLine().trim();
 			if (newEmail.length() > 0) {
 				email = newEmail;
@@ -265,7 +271,7 @@ public class ChatClient implements ChatClientDataProvider {
 	 * @param console
 	 */
 	private void getNick(Console console) {
-		System.out.print("Enter nick > ");
+		print("Enter nick > ", colorInfo);
 		String newNick = console.readLine().trim();
 		if (newNick.length() > 0) {
 			nick = newNick;
@@ -280,28 +286,28 @@ public class ChatClient implements ChatClientDataProvider {
 	 * @param console
 	 */
 	private void registerUser(Console console) {
-		System.out.println("Give user credentials for new user for server " + currentServer);
+		println("Give user credentials for new user for server " + currentServer, colorInfo);
 		getUserCredentials(console, true);
 		try {
 			if (username == null || password == null || email == null) {
-				System.out.println("Must specify all user information for registration!");
+				println("Must specify all user information for registration!", colorError);
 				return;
 			}
 			// Execute the HTTPS request to the server.
 			int response = httpClient.registerUser();
 			if (response >= 200 || response < 300) {
-				System.out.println("Registered successfully, you may start chatting!");
+				println("Registered successfully, you may start chatting!", colorInfo);
 			} else {
-				System.out.println("Failed to register!");
-				System.out.println("Error from server: " + response + " " + httpClient.getServerNotification());
+				println("Failed to register!", colorError);
+				println("Error from server: " + response + " " + httpClient.getServerNotification(), colorError);
 			}
 		} catch (KeyManagementException | KeyStoreException | CertificateException | NoSuchAlgorithmException
 				| FileNotFoundException e) {
-			System.out.println(Ansi.colorize(" **** ERROR in server certificate", colorError));
-			System.out.println(Ansi.colorize(e.getLocalizedMessage(),colorError));
+			println(" **** ERROR in server certificate", colorError);
+			println(e.getLocalizedMessage(),colorError);
 		} catch (Exception e) {
-			System.out.println(Ansi.colorize(" **** ERROR in user registration with server " + currentServer, colorError));
-			System.out.println(Ansi.colorize(e.getLocalizedMessage(),colorError));
+			println(" **** ERROR in user registration with server " + currentServer, colorError);
+			println(e.getLocalizedMessage(),colorError);
 		}
 	}
 
@@ -321,11 +327,11 @@ public class ChatClient implements ChatClientDataProvider {
 						if (null != messages) {
 							count = messages.size();
 							for (ChatMessage message : messages) {
-								System.out.print(Ansi.colorize(message.sentAsString(), colorDate));
+								print(message.sentAsString(), colorDate);
 								System.out.print(" ");
-								System.out.print(Ansi.colorize(message.nick, colorNick));
+								print(message.nick, colorNick);
 								System.out.print(" ");
-								System.out.println(Ansi.colorize(message.message, colorMsg));
+								println(message.message, colorMsg);
 							}
 						}
 					} else {
@@ -333,23 +339,23 @@ public class ChatClient implements ChatClientDataProvider {
 						if (null != messages) {
 							count = messages.size();
 							for (String message : messages) {
-								System.out.println(message);
+								println(message, colorMsg);
 							}
 						}
 					}
 				} else {
-					System.out.println(Ansi.colorize(" **** Error from server: " + response + " " + httpClient.getServerNotification(), colorError));
+					println(" **** Error from server: " + response + " " + httpClient.getServerNotification(), colorError);
 				}
 			} else {
-				System.out.println("Not yet registered or logged in!");
+				println("Not yet registered or logged in!", colorError);
 			}
 		} catch (KeyManagementException | KeyStoreException | CertificateException | NoSuchAlgorithmException
 				| FileNotFoundException e) {
-			System.out.println(Ansi.colorize(" **** ERROR in server certificate",colorError));
-			System.out.println(e.getLocalizedMessage());
+			println(" **** ERROR in server certificate",colorError);
+			println(e.getLocalizedMessage(), colorError);
 		} catch (IOException e) {
-			System.out.println(Ansi.colorize(" **** ERROR in getting messages from server " + currentServer,colorError));
-			System.out.println(e.getLocalizedMessage());
+			println(" **** ERROR in getting messages from server " + currentServer,colorError);
+			println(e.getLocalizedMessage(), colorError);
 		}
 		return count;
 	}
@@ -364,18 +370,18 @@ public class ChatClient implements ChatClientDataProvider {
 			try {
 				int response = httpClient.postChatMessage(message);
 				if (response < 200 || response >= 300) {
-					System.out.println(Ansi.colorize("Error from server: " + response + " " + httpClient.getServerNotification(),colorError));
+					println("Error from server: " + response + " " + httpClient.getServerNotification(),colorError);
 				}
 			} catch (KeyManagementException | KeyStoreException | CertificateException | NoSuchAlgorithmException
 					| FileNotFoundException e) {
-				System.out.println(Ansi.colorize(" **** ERROR in server certificate",colorError));
-				System.out.println(e.getLocalizedMessage());
+				println(" **** ERROR in server certificate",colorError);
+				println(e.getLocalizedMessage(), colorError);
 			} catch (IOException e) {
-				System.out.println(Ansi.colorize(" **** ERROR in posting message to server " + currentServer,colorError));
-				System.out.println(e.getLocalizedMessage());
+				println(" **** ERROR in posting message to server " + currentServer,colorError);
+				println(e.getLocalizedMessage(), colorError);
 			}
 		} else {
-			System.out.println("Must register/login to server before posting messages!");
+			println("Must register/login to server before posting messages!", colorInfo);
 		}
 	}
 
@@ -383,30 +389,46 @@ public class ChatClient implements ChatClientDataProvider {
 	 * Print out the available commands.
 	 */
 	private void printCommands() {
-		System.out.println("--- O3 Chat Client Commands ---");
-		System.out.println("/server -- Change the server");
-		System.out.println("/register  -- Register as a new user in server");
-		System.out.println("/login -- Login using already registered credentials");
-		System.out.println("/nick -- Specify a nickname to use in chat server");
-		System.out.println("/get -- Get new messages from server");
-		System.out.println("/auto -- Toggles automatic /get in " + AUTO_FETCH_INTERVAL / 1000.0 + " sec intervals");
-		System.out.println("/help -- Prints out this information");
-		System.out.println("/info -- Prints out settings and user information");
-		System.out.println("/exit -- Exit the client app");
-		System.out.println(" > To chat, write a message and press enter to send a message.");
+		println("--- O3 Chat Client Commands ---", colorInfo);
+		println("/server -- Change the server", colorInfo);
+		println("/register  -- Register as a new user in server", colorInfo);
+		println("/login -- Login using already registered credentials", colorInfo);
+		println("/nick -- Specify a nickname to use in chat server", colorInfo);
+		println("/get -- Get new messages from server", colorInfo);
+		println("/auto -- Toggles automatic /get in " + AUTO_FETCH_INTERVAL / 1000.0 + " sec intervals", colorInfo);
+		println("/help -- Prints out this information", colorInfo);
+		println("/info -- Prints out settings and user information", colorInfo);
+		println("/exit -- Exit the client app", colorInfo);
+		println(" > To chat, write a message and press enter to send a message.", colorInfo);
 	}
 
 	/**
 	 * Prints out the configuration of the client.
 	 */
 	private void printInfo() {
-		System.out.println("Server: " + currentServer);
-		System.out.println("Server version assumed: " + serverVersion);
-		System.out.println("User: " + username);
-		System.out.println("Nick: " + nick);
-		System.out.println("Autofetch is " + (autoFetch ? "on" : "off"));
+		println("Server: " + currentServer, colorInfo);
+		println("Server version assumed: " + serverVersion, colorInfo);
+		println("User: " + username, colorInfo);
+		println("Nick: " + nick, colorInfo);
+		println("Autofetch is " + (autoFetch ? "on" : "off"), colorInfo);
+		println("Using color in output: " + (useColorOutput ? "yes" : "no"), colorInfo);
 	}
 
+	private void print(String item, Attribute withAttribute) {
+		if (useColorOutput) {
+			System.out.print(Ansi.colorize(item, withAttribute));
+		} else {
+			System.out.print(item);
+		}
+	}
+
+	private void println(String item, Attribute withAttribute) {
+		if (useColorOutput) {
+			System.out.println(Ansi.colorize(item, withAttribute));
+		} else {
+			System.out.println(item);
+		}
+	}
 	/*
 	 * Implementation of the ChatClientDataProvider interface. The ChatHttpClient
 	 * calls these methods to get configuration info needed in communication with
