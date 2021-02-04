@@ -36,10 +36,10 @@ public class ChatUnitTestSettings {
     // Change the path & filename here of the client side certificate!
     public static final String clientSideCertificate = "/Users/anttijuustila/workspace/O3/O3-chat-client/localhost.cer";
     public static final int serverVersion = 3;
-    // Must be a user in your database already
-    public static final String existingUser = "antti";
-    // Must be a valid password for the above user
-    public static final String existingPassword = "juustila";
+    public static final String existingUser = "antti";           // Must be a user in your database already
+    public static final String existingPassword = "juustila";    // Must be a valid password for the above user
+    public static final String existingUser2 = "aristoteles";    // Same as above
+    public static final String existingPassword2 = "pythagoras"; // Same as above
 }
 ```
 
@@ -47,8 +47,7 @@ Where:
 
 * `serverVersion` is the number of the exercise you are testing. If you have just finished exercise 2, this should be 2. When 
 you have finished exercise 3, change this number to 3 in *both* of the test Java files.
-* `existingUser`and `existingPassword` must be a user that is already registered in your server. So use either curl or ChatClient to register a 
-user in your server, and then use this username/password here.
+* `existingUser`and `existingPassword` as well as `existingUser2` and `existingPassword2` must be users that are already registered in your server *before you run the tests*. So use either curl or ChatClient to register these users in your server.
 * the `clientSideCertificate` must be set as mentioned above, and this path must be a full path to that certificate file.
 
 ## How to run the tests?
@@ -67,6 +66,8 @@ select the Run test (triangle pointing right).
 
 When the tests pass, the test symbol is green "OK". When it is red, the test fails. You should then analyse the situation and
 think why the test failed and what you should change in your server to fix the situation.
+
+**Note** that the `HttpHeaderTests` and `ParallelTests` are only run when server version is 5 or above.
 
 **Note** That if the server is already implementing things from Exercise 3, for example, but the `serverVersion` in the tests is
 2, for example, then the tests may fail. So you must configure the tests correctly, telling version of the server you are testing.
