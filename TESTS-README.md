@@ -2,15 +2,21 @@
 
 The necessary dependent components needed to run JUnit tests are already included in the `pom.xml` of the project.
 
-If your VS Code does not have the necessary Extensions to test Java apps, see this VS Code help page:
+The tests should be executed from the command line, since they are *parameterized*. All the necessary parameters
+are in the three test setting XML files included in the project.
 
-[https://code.visualstudio.com/docs/java/java-testing](https://code.visualstudio.com/docs/java/java-testing)
+You can execute tests also from VS Code, but then it uses *only one* of the hard coded test parameter XML files `test-config-1.xml`.
 
-For an overview of the testing using VS Code, see [this video](https://youtu.be/ZO2aJSiDRSw) (Finnish only).
+In the Exercises 5 and especially 6, you *need* to run the tests from the command line. You execute the three tests 
+from *three separate terminal windows* and three separate test configuration files.
+
+The purpose of this is to execute three tests in parallel to check your server can handle at least moderate amount of
+stress from the three test clients which all run tests in parallel in different threads.
 
 ## Where are the tests?
 
-You can find the test source code files in `src/test` folder in your project.
+You can find the test source code files in `src/test` folder in your project. Test configurations for
+command line testing are in the project root directory in the three `test-config-n.xml` files (where n is 1,2 or 3).
 
 VS Code has a Test view you can select from the left side. The button reminds of a lab liquid bottle:
 
@@ -26,43 +32,84 @@ you can test it by changing the server version to `2`.
 Also you need to provide the tests the same client side certificate file that you must give to the actual
 ChatClient app. See instructions in [README.md](README.md) on how to do that.
 
-So before you run the tests, change these test configurations from the `ChatUnitTestSettings.java`:
+Test configuration were previously changed in the file `ChatUnitTestSettings.java`. *Not anymore*. Now you do
+not have to edit the code anymore to configure the tests. Just edit the XML test configuration files.
 
-```Java
-public class ChatUnitTestSettings {
-    // TODO: Change these for your setup!
-    // Also retrieve the server client side certificate and save it to a file
-    // as instructed in the Preparing the client section (and video), and
-    // Change the path & filename here of the client side certificate!
-    public static final String clientSideCertificate = "/Users/anttijuustila/workspace/O3/O3-chat-client/localhost.cer";
-    public static final int serverVersion = 3;
-    public static final String existingUser = "antti";           // Must be a user in your database already
-    public static final String existingPassword = "juustila";    // Must be a valid password for the above user
-    public static final String existingUser2 = "aristoteles";    // Same as above
-    public static final String existingPassword2 = "pythagoras"; // Same as above
-}
+There are **three test configuration files** to edit, `test-config-1.xml`, `test-config-2.xml` and `test-config-3.xml`.
+
+The contents of each file similar:
+
+```XML
+<testconfig>
+   <servercertificate>/Users/anttijuustila/workspace/O3/O3-chat-client/localhost.cer</servercertificate>
+   <serverversion>5</serverversion>
+   <user id="01">
+      <username>antti</username>
+      <password>juustila21</password>
+   </user>
+   <user id="02">
+      <username>markus</username>
+      <password>kelanti21</password>
+   </user>
+</testconfig>
 ```
 
-Where:
+Use these configuration items to change the test settings on your PC:
 
-* `serverVersion` is the number of the exercise you are testing. If you have just finished exercise 2, this should be 2. When 
-you have finished exercise 3, change this number to 3 in *both* of the test Java files.
-* `existingUser`and `existingPassword` as well as `existingUser2` and `existingPassword2` must be users that are already registered in your server *before you run the tests*. So use either curl or ChatClient to register these users in your server.
-* the `clientSideCertificate` must be set as mentioned above, and this path must be a full path to that certificate file.
+* The `servercertificate` must be set as mentioned earlier, and this path must be a full path to that certificate file on your PC.
+* `serverversion` is the number of the exercise you are testing. If you have just finished exercise 2, this should be 2. When 
+you have finished exercise 3, change this number to 3 in *all* of the test configuration files.
+* `user` element contains `username` and `password` elements. Each test config file must have two separate users. You do not have to register the users manually to the server, the **tests will do that for you**. Just make sure that if your server checks the validity of the username and/or password, the information here is valid for your server (e.g. password is long enough).
+
+Remember to edit all the three test configuration files when you change the test settings.
 
 ## How to run the tests?
 
 Before using the tests, you obviously need to run the server.  After launching it, you can then execute the tests.
 
-Make sure you configured the tests (above). Then you can run them. From command line, `mvn package` builds the client
-*and* executes the tests too.
+Make sure you configured the tests (above). Then you can run them. From command line, first build the client (if not already built):
+
+```
+mvn package -DskipTests
+```
+
+and then run a tests:
+
+```
+mvn test -Dtestsettings="test-config-1.xml"
+```
+
+If the test passes, then **execute all the three tests in parallel**. First, open **three** terminal windows for the three tests.
+
+Then in each of the terminals, execute one test, and a different test in another. Here is a sample of what the test execution
+commands look like:
+
+```
+mvn test -Dtestsettings="test-config-1.xml"
+mvn test -Dtestsettings="test-config-2.xml"
+mvn test -Dtestsettings="test-config-3.xml"
+```
+
+So one test in one terminal. You should write (do not press enter!) **one** of the test commands above in one terminal window. When you have a test command ready and waiting in all of the terminal windows, quickly press enter and switch from one window to
+another so that the tests are run at the same time.
+
+If your server can handle heavy loads, you should not see any errors in the tests.
+
+**ADD A NOTE HERE ABOUT HOW MANY CHAT MESSAGES THERE SHOULD BE IN THE DB IF STARTING TESTS WITH EMPTY DATABASE AND RUNNING THEM ONCE**
+
+## Testing in VS Code
+
+If your VS Code does not have the necessary Extensions to test Java apps, see this VS Code help page:
+
+[https://code.visualstudio.com/docs/java/java-testing](https://code.visualstudio.com/docs/java/java-testing)
+
+For an overview of the testing using VS Code, see [this video](https://youtu.be/ZO2aJSiDRSw) (Finnish only).
 
 In Visual Studio Code, select the Test view, then select the Run Tests button (triangle pointing right):
 
 ![Running tests](vs-code-run-tests.png) 
 
-It executes all of the tests. If you want to run just one of the tests, hover your mouse over the test and
-select the Run test (triangle pointing right).
+It executes all of the tests with one hard coded test configuration `test-config-1.xml`. If you want to run just one of the tests, hover your mouse over the test and select the Run test (triangle pointing right).
 
 When the tests pass, the test symbol is green "OK". When it is red, the test fails. You should then analyse the situation and
 think why the test failed and what you should change in your server to fix the situation.
