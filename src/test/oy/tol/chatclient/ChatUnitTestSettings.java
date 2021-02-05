@@ -18,7 +18,7 @@ public class ChatUnitTestSettings {
     // instructions!
     public static String clientSideCertificate = null;
     public static int serverVersion = 3;
-    // NOTE: Test users are read from t
+    // NOTE: Test users are read from the test config XML files.
     public static String existingUser = null;
     public static String existingPassword = null;
     public static String existingUser2 = null;
