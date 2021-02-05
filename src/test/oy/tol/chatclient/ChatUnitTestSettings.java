@@ -13,8 +13,9 @@ import org.w3c.dom.NodeList;
 
 public class ChatUnitTestSettings {
 
-    // Retrieve the server client side certificate and save it to a file
-    // as instructed in the Preparing the client section (and video).
+    // NOTE ALERT!! Do NOT change these settings by hand anymore.
+    // Tests are configured from the XML test config files. See TESTS-README.md for
+    // instructions!
     public static String clientSideCertificate = null;
     public static int serverVersion = 3;
     // NOTE: Test users are read from t
