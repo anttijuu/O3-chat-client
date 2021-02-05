@@ -37,7 +37,7 @@ not have to edit the code anymore to configure the tests. Just edit the XML test
 
 There are **three test configuration files** to edit, `test-config-1.xml`, `test-config-2.xml` and `test-config-3.xml`.
 
-The contents of each file similar:
+The contents of each file is similar:
 
 ```XML
 <testconfig>
@@ -95,7 +95,14 @@ another so that the tests are run at the same time.
 
 If your server can handle heavy loads, you should not see any errors in the tests.
 
-**ADD A NOTE HERE ABOUT HOW MANY CHAT MESSAGES THERE SHOULD BE IN THE DB IF STARTING TESTS WITH EMPTY DATABASE AND RUNNING THEM ONCE**
+You should be able to run the tests starting with an **empty database**. If you do that, and execute three tests in three
+terminal windows **once**, you should have 989 chat messages in the database after the tests end:
+
+```
+sqlite> select count(*) from messages;
+989
+sqlite>
+```
 
 ## Testing in VS Code
 
