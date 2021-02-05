@@ -1,0 +1,13 @@
+<?xml version="1.0"?>
+<testconfig>
+   <servercertificate>/Users/anttijuustila/workspace/O3/O3-chat-client/localhost.cer</servercertificate>
+   <serverversion>5</serverversion>
+   <user id="01">
+      <username>aristoteles</username>
+      <password>nikomakhos</password>
+   </user>
+   <user id="02">
+      <username>platon</username>
+      <password>periktione</password>
+   </user>
+</testconfig>

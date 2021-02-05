@@ -4,6 +4,7 @@ import java.io.BufferedReader;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.net.URL;
@@ -142,13 +143,15 @@ public class ChatHttpClient {
 		} else {
 			newMessages = null;
 			plainStringMessages = null;
-			BufferedReader in = new BufferedReader(
-					new InputStreamReader(connection.getInputStream(), StandardCharsets.UTF_8));
-			String inputLine;
-			while ((inputLine = in.readLine()) != null) {
-				serverNotification += " " + inputLine;
+			InputStream in = connection.getInputStream();
+			if (null != in) {
+				BufferedReader reader = new BufferedReader(new InputStreamReader(in, StandardCharsets.UTF_8));
+				String inputLine;
+				while ((inputLine = reader.readLine()) != null) {
+					serverNotification += " " + inputLine;
+				}
+				in.close();
 			}
-			in.close();
 		}
 		return responseCode;
 	}
@@ -197,13 +200,15 @@ public class ChatHttpClient {
 			// Successfully posted.
 			serverNotification = "";
 		} else {
-			BufferedReader in = new BufferedReader(
-					new InputStreamReader(connection.getErrorStream(), StandardCharsets.UTF_8));
-			String inputLine;
-			while ((inputLine = in.readLine()) != null) {
-				serverNotification += " " + inputLine;
+			InputStream in = connection.getInputStream();
+			if (null != in) {
+				BufferedReader reader = new BufferedReader(new InputStreamReader(in, StandardCharsets.UTF_8));
+				String inputLine;
+				while ((inputLine = reader.readLine()) != null) {
+					serverNotification += " " + inputLine;
+				}
+				in.close();
 			}
-			in.close();
 		}
 		return responseCode;
 	}
@@ -247,13 +252,15 @@ public class ChatHttpClient {
 			// Successfully registered.
 			serverNotification = "";
 		} else {
-			BufferedReader in = new BufferedReader(
-					new InputStreamReader(connection.getInputStream(), StandardCharsets.UTF_8));
-			String inputLine;
-			while ((inputLine = in.readLine()) != null) {
-				serverNotification += " " + inputLine;
+			InputStream in = connection.getInputStream();
+			if (null != in) {
+				BufferedReader reader = new BufferedReader(new InputStreamReader(in, StandardCharsets.UTF_8));
+				String inputLine;
+				while ((inputLine = reader.readLine()) != null) {
+					serverNotification += " " + inputLine;
+				}
+				in.close();
 			}
-			in.close();
 		}
 		return responseCode;
 	}
