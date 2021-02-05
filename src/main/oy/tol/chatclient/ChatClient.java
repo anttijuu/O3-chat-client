@@ -61,6 +61,7 @@ public class ChatClient implements ChatClientDataProvider {
 	public static int serverVersion = 3;
 
 	public static void main(String[] args) {
+
 		// Run the client.
 		if (args.length == 2) {
 			System.out.println("Launching ChatClient with args " + args[0] + " " + args[1]);
