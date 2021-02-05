@@ -35,6 +35,7 @@ import static org.junit.jupiter.api.Assertions.fail;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import org.json.JSONObject;
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.TestMethodOrder;
 
@@ -46,6 +47,14 @@ public class RawHttpsRegistrationTests {
     private static final int REQUEST_TIMEOUT = 30 * 1000;
     String serverAddr = "https://localhost:8001/";
 
+    @Test
+    @BeforeAll
+    @DisplayName("Setting up the test environment")
+    public static void initialize() {
+        assertTrue(ChatUnitTestSettings.readSettingsXML(), () -> "Could not initialize the tests. Check your test setting XML file");
+    }
+
+    
     @Test
     @DisplayName("Testing registration with empty strings")
     void testEmptyRegistrationStrings() {

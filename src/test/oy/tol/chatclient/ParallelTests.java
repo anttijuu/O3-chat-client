@@ -10,9 +10,11 @@ import java.util.Collection;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.DynamicTest;
 import org.junit.jupiter.api.RepeatedTest;
+import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestFactory;
 import org.junit.jupiter.api.parallel.Execution;
 import org.junit.jupiter.api.parallel.ExecutionMode;
@@ -30,6 +32,13 @@ public class ParallelTests {
         httpClient2 = new ChatHttpClient(client2, ChatUnitTestSettings.clientSideCertificate);
     }
 
+    @Test
+    @BeforeAll
+    @DisplayName("Setting up the test environment")
+    public static void initialize() {
+        assertTrue(ChatUnitTestSettings.readSettingsXML(), () -> "Could not initialize the tests. Check your test setting XML file");
+    }
+    
     @RepeatedTest(100)
     @Execution(ExecutionMode.CONCURRENT)
     // @RepeatedTest(100)

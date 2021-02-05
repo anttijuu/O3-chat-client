@@ -13,6 +13,8 @@ import static org.junit.jupiter.api.MethodOrderer.OrderAnnotation;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.junit.jupiter.api.Assertions.fail;
 import static org.junit.jupiter.api.Assertions.assertThrows;
+
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.TestMethodOrder;
 
@@ -32,6 +34,13 @@ public class ChatHttpServerTests implements ChatClientDataProvider {
         httpClient = new ChatHttpClient(this, ChatUnitTestSettings.clientSideCertificate);
     }
 
+    @Test
+    @BeforeAll
+    @DisplayName("Setting up the test environment")
+    public static void initialize() {
+        assertTrue(ChatUnitTestSettings.readSettingsXML(), () -> "Could not initialize the tests. Check your test setting XML file");
+    }
+    
     @Test 
     @Order(1)
     @DisplayName("Testing HTTP GET /chat without valid user credentials, must throw")
