@@ -1,6 +1,10 @@
 <?xml version="1.0"?>
 <testconfig>
+<<<<<<< HEAD
    <servercertificate>/Users/juustila/workspace/O3/O3-chat-client/localhost.cer</servercertificate>
+=======
+   <servercertificate>/Users/anttijuustila/workspace/O3/O3-chat-client/localhost.cer</servercertificate>
+>>>>>>> Working with tests enabled in many clients simultaneously
    <serverversion>5</serverversion>
    <user id="01">
       <username>aristoteles</username>
