@@ -13,6 +13,6 @@ If you wish to provide a fix to a bug, please provide a pull request:
 
 I will then review the fix and accept it if possible.
 
-Contributions welcomed and thankfully received.
+Contributions welcomed and thankfully received. Please be aware of the license before entering contributions.
 
 N.B: this is a course project and all contributions are reviewed for suitability for this specific course. 
