@@ -50,6 +50,7 @@ The following are needed to build and run the client:
 * Maven
 * JSON library (see details from `pom.xml`)
 * JUnit and related components
+* JColor for color output (optional, off by default)
 * An IDE if you wish to view and/or edit the code.
 
 The client app is structured as described in this high level UML class diagram:
@@ -67,15 +68,12 @@ Note that not all details of the implementation are visible in this diagram.
 
 Build the client from command line:
 
-`mvn install -DskipTests`
+`mvn package -DskipTests`
 
 You should then have a subdirectory `target` including .jar files for running the client.
 
 If you do not have a working server running -- the usual `mvn package` also executes tests,
 and if they do not pass, the .jar file is not left in the target directory.
-
-When your server *is* running and you wish to build the client *and* execute the test from the command line, do
-`mvn package`. 
 
 If there are errors, check out the error output and sort out the issues.
 
@@ -85,7 +83,7 @@ The console UI in Eclipse may not work if debugging within Eclipse. In that case
 from the command line.
 
 Windows Command prompt does not by default support UTF-8, so any special chars may end up not transferring
-properly. Prefer using VS Code terminal which does support UTF-8, or even better, use a proper terminal
+properly. Prefer using a terminal which does support UTF-8, or even better, use a proper terminal
 app such as Terminus (Win/Linux/macOS) or iTerm (macOS).
 
 ## Preparing the client
@@ -178,7 +176,7 @@ upper left corner of the image below (red underlining). That contains the launch
 
 ![Arguments to launch configuration](launch-config-json.png)
 
-## General usage of the client
+## Using the client
 
 Note that the client fails to send and receive data if the server certificate file is not
 in the directory mentioned in the VS Code launch configuration or in the second command line parameter.
@@ -195,7 +193,7 @@ available in the client, enter `/help` in the client. The usual process is:
 1. Exit the client app using the command `/exit`.
 
 Test your server functionality with the client. In case you doubt the results, you can also use curl for
-testing, following the course instructions. Curl also helps you in more detailed analysis, using the `--trace-ascii`
+testing, following the course instructions. Curl also helps you in more detailed analysis, using the `--trace-ascii <filename>`
 option you can use to see details of the comms between the client and the server.
 
 If the server works with the client, your server should fulfill the requirements of the course, depending
@@ -205,10 +203,10 @@ on the other requirements listed in the course project requrements and Server AP
 
 The project includes unit tests with JUnit. Necessary dependencies are in the `pom.xml` file.
 
-For instructions on how to execute the tests, see [TESTS-README.md](TESTS-README.md).
+For instructions on how to execute the unit tests, see [TESTS-README.md](TESTS-README.md).
 
 ## More information
 
-(c) Antti Juustila 2020-2021, All rights reserved.
-
-INTERACT Research Unit, University of Oulu, Finland
+* (c) Antti Juustila 2020-2021, All rights reserved.
+* MIT License (see LICENSE)
+* INTERACT Research Unit, University of Oulu, Finland
