@@ -18,6 +18,7 @@ import java.security.NoSuchAlgorithmException;
 import java.security.cert.Certificate;
 import java.security.cert.CertificateException;
 import java.security.cert.CertificateFactory;
+import java.util.Base64;
 import java.util.List;
 import java.util.Random;
 
@@ -39,10 +40,11 @@ import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.TestMethodOrder;
 
-@DisplayName("Tests using registration with HttpsUrlConnection")
-public class RawHttpsRegistrationTests {
+@DisplayName("Tests using registration and chatting with HttpsUrlConnection")
+class RawHttpsTests {
     // Different paths (contexts) the server supports and this client implements.
     private static final String REGISTRATION = "registration";
+    private static final String CHAT = "chat";
     private static final int CONNECT_TIMEOUT = 10 * 1000;
     private static final int REQUEST_TIMEOUT = 30 * 1000;
     String serverAddr = "https://localhost:8001/";
@@ -50,7 +52,7 @@ public class RawHttpsRegistrationTests {
     @Test
     @BeforeAll
     @DisplayName("Setting up the test environment")
-    public static void initialize() {
+    static void initialize() {
         assertTrue(ChatUnitTestSettings.readSettingsXML(), () -> "Could not initialize the tests. Check your test setting XML file");
     }
 
@@ -124,7 +126,80 @@ public class RawHttpsRegistrationTests {
         }
     }
 
+    @Test 
+    @DisplayName("Send invalid chat JSON")
+    void testInvalidJSONChatMessages() {
+        if (ChatUnitTestSettings.serverVersion < 3) {
+            return;
+        }
+        try {
+            String invalid = "";
+            int status = postInvalidChatJSONMessage(invalid, "application/json");
+            assertTrue(status >= 400, () -> "Server should return error 4xx.");
+            invalid =  "{ \"diiipa\" : \"daapa\" }";
+            status = postInvalidChatJSONMessage(invalid, "application/json");
+            assertTrue(status >= 400, () -> "Server should return error 4xx.");
+            invalid =  "{ \"diiipa : \"daapa\" }";
+            status = postInvalidChatJSONMessage(invalid, "application/json");
+            assertTrue(status >= 400, () -> "Server should return error 4xx.");
+            invalid =  "siskonmakkarakeitto";
+            status = postInvalidChatJSONMessage(invalid, "application/json");
+            assertTrue(status >= 400, () -> "Server should return error 4xx.");
+        } catch (KeyManagementException e) {
+            fail("Test environment fault; check server's client side certicate is available.");
+        } catch (KeyStoreException e) {
+            fail("Test environment fault; check server's client side certicate is available.");
+        } catch (CertificateException e) {
+            fail("Test environment fault; check server's client side certicate is available.");
+        } catch (NoSuchAlgorithmException e) {
+            fail("Test environment fault; check server's client side certicate is available.");
+        } catch (IOException e) {
+            fail("IOException because " + e.getMessage());
+        }
+    }
+
     // Supportive methods used in tests above.
+
+    private int postInvalidChatJSONMessage(String invalidJSON, String contentType)  throws KeyManagementException,
+    KeyStoreException, CertificateException, NoSuchAlgorithmException, FileNotFoundException, IOException {
+        String addr = serverAddr;
+		addr += CHAT;
+		URL url = new URL(addr);
+
+		HttpsURLConnection connection = createTrustingConnectionDebug(url);
+
+		byte[] msgBytes = invalidJSON.getBytes(StandardCharsets.UTF_8);
+
+        connection.setRequestProperty("Content-Type", contentType);
+
+		connection.setRequestMethod("POST");
+		connection.setDoOutput(true);
+		connection.setDoInput(true);
+		connection.setRequestProperty("Content-Length", String.valueOf(msgBytes.length));
+        String auth = ChatUnitTestSettings.existingUser + ":" + ChatUnitTestSettings.existingPassword;
+		byte[] encodedAuth = Base64.getEncoder().encode(auth.getBytes(StandardCharsets.UTF_8));
+		String authHeaderValue = "Basic " + new String(encodedAuth);
+		connection.setRequestProperty("Authorization", authHeaderValue);
+
+		OutputStream writer = connection.getOutputStream();
+		writer.write(msgBytes);
+		writer.close();
+
+		int responseCode = connection.getResponseCode();
+        if (responseCode >= 400) {
+            try {
+                BufferedReader in = new BufferedReader(
+                        new InputStreamReader(connection.getInputStream(), StandardCharsets.UTF_8));
+                String inputLine;
+                while ((inputLine = in.readLine()) != null) {
+                }
+                in.close();    
+            } catch (Exception e) {
+                // We do not care if reading response body fails, just about the responseCode.
+            }
+		}
+        return responseCode;
+    }
 
     private int registerWithInvalidContent(String invalidRegistrationString) throws KeyManagementException,
             KeyStoreException, CertificateException, NoSuchAlgorithmException, FileNotFoundException, IOException {
@@ -153,12 +228,10 @@ public class RawHttpsRegistrationTests {
 		int responseCode = connection.getResponseCode();
 		if (responseCode >= 400) {
             try {
-                String result = "";
                 BufferedReader in = new BufferedReader(
                         new InputStreamReader(connection.getInputStream(), StandardCharsets.UTF_8));
                 String inputLine;
                 while ((inputLine = in.readLine()) != null) {
-                    result += " " + inputLine;
                 }
                 in.close();    
             } catch (Exception e) {
@@ -238,6 +311,7 @@ public class RawHttpsRegistrationTests {
         // All requests use these common timeouts.
         connection.setConnectTimeout(CONNECT_TIMEOUT);
         connection.setReadTimeout(REQUEST_TIMEOUT);
+
         return connection;
     }
 
