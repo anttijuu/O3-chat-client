@@ -39,9 +39,8 @@ public class ParallelTests {
         assertTrue(ChatUnitTestSettings.readSettingsXML(), () -> "Could not initialize the tests. Check your test setting XML file");
     }
     
-    @RepeatedTest(100)
+    @RepeatedTest(500)
     @Execution(ExecutionMode.CONCURRENT)
-    // @RepeatedTest(100)
     @DisplayName("Get messages in parallel from server")
     void executeChatGet() {
         if (ChatUnitTestSettings.serverVersion < 5) {
@@ -62,7 +61,7 @@ public class ParallelTests {
     @TestFactory
     @DisplayName("First thread A posting chat messages")
     Collection<DynamicTest> test_parallel_dynamictests1() {
-        final int DYNAMIC_POST_COUNT = 50;
+        final int DYNAMIC_POST_COUNT = 500;
         List<DynamicTest> testArray = new ArrayList<DynamicTest>();
         if (ChatUnitTestSettings.serverVersion < 5) {
             return testArray;
@@ -83,7 +82,7 @@ public class ParallelTests {
     @TestFactory
     @DisplayName("Second thread B posting chat messages")
     Collection<DynamicTest> test_parallel_dynamictests2() {
-        final int DYNAMIC_POST_COUNT = 50;
+        final int DYNAMIC_POST_COUNT = 500;
         List<DynamicTest> testArray = new ArrayList<DynamicTest>();
         if (ChatUnitTestSettings.serverVersion < 5) {
             return testArray;
