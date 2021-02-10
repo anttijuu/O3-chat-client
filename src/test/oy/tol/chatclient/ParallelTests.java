@@ -72,7 +72,7 @@ public class ParallelTests {
                 int code = httpClient1.postChatMessage("Dynamically posting A-" + passingInt);
                 assertEquals(200, code, () -> "Server returned code " + code);
                 System.out.println(Thread.currentThread().getName() + " => Dynamic test A");
-                TimeUnit.MILLISECONDS.sleep(50);
+                TimeUnit.MILLISECONDS.sleep(500);
             }));
         }
         return testArray;

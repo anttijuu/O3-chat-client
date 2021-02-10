@@ -135,16 +135,16 @@ class RawHttpsTests {
         try {
             String invalid = "";
             int status = postInvalidChatJSONMessage(invalid, "application/json");
-            assertTrue(status >= 400, () -> "Server should return error 4xx.");
+            assertTrue(status >= 400, () -> "Server should return error 4xx with empty JSON.");
             invalid =  "{ \"diiipa\" : \"daapa\" }";
             status = postInvalidChatJSONMessage(invalid, "application/json");
-            assertTrue(status >= 400, () -> "Server should return error 4xx.");
+            assertTrue(status >= 400, () -> "Server should return error 4xx with valid JSON not having required elements.");
             invalid =  "{ \"diiipa : \"daapa\" }";
             status = postInvalidChatJSONMessage(invalid, "application/json");
-            assertTrue(status >= 400, () -> "Server should return error 4xx.");
+            assertTrue(status >= 400, () -> "Server should return error 4xx with invalid JSON.");
             invalid =  "siskonmakkarakeitto";
             status = postInvalidChatJSONMessage(invalid, "application/json");
-            assertTrue(status >= 400, () -> "Server should return error 4xx.");
+            assertTrue(status >= 400, () -> "Server should return error 4xx with string with no valid JSON.");
         } catch (KeyManagementException e) {
             fail("Test environment fault; check server's client side certicate is available.");
         } catch (KeyStoreException e) {
