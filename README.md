@@ -20,7 +20,8 @@ those below.
 2) build it, 3) prepare the client with the self-signed certificate and 4) run it 
 either from the command line or from VS Code. Note that since the video was made, JUnit
 tests were added to the project. This changes how to build the client from the command line.
-See instructions below from section *Building the client*.
+See instructions below from section *Building the client*. See also a video on running the 
+tests in the [TESTS-README.md](TESTS-README.md).
 
 ## Background
 
