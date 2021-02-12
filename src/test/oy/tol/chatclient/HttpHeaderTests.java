@@ -60,7 +60,7 @@ public class HttpHeaderTests implements ChatClientDataProvider {
                 for (int looper = 0; looper < MSGS_TO_ADD; looper++) {
                     String message = randomString(120);
                     result = httpClient.postChatMessage(message);
-                    assertTrue(result == 200, () -> "Must get 200 from server");
+                    assertTrue((result == 200 || result == 429), () -> "Must get 200 from server (or 429 if posting too fast).");
                 }
                 // Wait after posting a bit and then get new messages.
                 Thread.sleep(1000);

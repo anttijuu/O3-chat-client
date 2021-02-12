@@ -13,6 +13,9 @@ from *three separate terminal windows* and three separate test configuration fil
 The purpose of this is to execute three tests in parallel to check your server can handle at least moderate amount of
 stress from the three test clients which all run tests in parallel in different threads.
 
+[This video of four parallel tests](https://youtu.be/NmofffdPNf8) demonstrates how the tests are executed with the 
+server. I also discuss analysing bugs found and how to deal with them. Video has essential topics subtitled in English.
+
 ## Where are the tests?
 
 You can find the test source code files in `src/test` folder in your project. Test configurations for

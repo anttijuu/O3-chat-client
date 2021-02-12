@@ -122,7 +122,7 @@ public class ChatHttpServerTests implements ChatClientDataProvider {
             password = ChatUnitTestSettings.existingPassword;
             String message = randomString(120);
             int result = httpClient.postChatMessage(message);
-            assertTrue(result == 200, () -> "Must get 200 from server");
+            assertTrue((result == 200 || result == 429), () -> "Must get 200 from server (or 429 if posting too fast).");
 		} catch (Exception e) {
 			fail("Exception in getting chat messages from server: " + e.getMessage());
 		}

@@ -67,15 +67,14 @@ Note that not all details of the implementation are visible in this diagram.
 
 Build the client from command line:
 
-`mvn install -DskipTests`
+`mvn package -DskipTests`
 
 You should then have a subdirectory `target` including .jar files for running the client.
 
 If you do not have a working server running -- the usual `mvn package` also executes tests,
 and if they do not pass, the .jar file is not left in the target directory.
 
-When your server *is* running and you wish to build the client *and* execute the test from the command line, do
-`mvn package`. 
+For instructions on testing the server with the client, see [TESTS-README.md](TESTS-README.md).
 
 If there are errors, check out the error output and sort out the issues.
 
