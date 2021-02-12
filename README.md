@@ -75,6 +75,8 @@ You should then have a subdirectory `target` including .jar files for running th
 If you do not have a working server running -- the usual `mvn package` also executes tests,
 and if they do not pass, the .jar file is not left in the target directory.
 
+For instructions on testing the server with the client, see [TESTS-README.md](TESTS-README.md).
+
 If there are errors, check out the error output and sort out the issues.
 
 You can also build and run the client from an IDE, e.g. Visual Studio Code or Eclipse.

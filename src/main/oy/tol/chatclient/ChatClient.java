@@ -61,6 +61,7 @@ public class ChatClient implements ChatClientDataProvider {
 	public static int serverVersion = 3;
 
 	public static void main(String[] args) {
+
 		// Run the client.
 		if (args.length == 2) {
 			System.out.println("Launching ChatClient with args " + args[0] + " " + args[1]);
@@ -248,20 +249,41 @@ public class ChatClient implements ChatClientDataProvider {
 			cancelAutoFetch();
 			username = newUsername;
 			nick = username;
+			email = null;
+			password = null;
+		} else {
+			print("Continuing with existing credentials", colorInfo);
+			printInfo();
+			return;
 		}
 		print("Enter password > ", colorInfo);
 		char[] newPassword = console.readPassword();
-		if (newPassword.length > 0) {
+		if (null != newPassword && newPassword.length > 0) {
 			password = new String(newPassword);
+		} else {
+			print("Canceled, /register or /login!", colorError);
+			username = null;
+			password = null;
+			email = null;
+			nick = null;
+			return;
 		}
 		if (forRegistering) {
 			print("Enter email > ", colorInfo);
 			String newEmail = console.readLine().trim();
-			if (newEmail.length() > 0) {
+			if (null != newEmail && newEmail.length() > 0) {
 				email = newEmail;
+			} else {
+				print("Canceled, /register or /login!", colorError);
+				username = null;
+				password = null;
+				email = null;
+				nick = null;
 			}
 		} else {
-			getNewMessages();
+			if (null != username && null != password) {
+				getNewMessages();
+			}
 		}
 	}
 
@@ -319,7 +341,7 @@ public class ChatClient implements ChatClientDataProvider {
 	private int getNewMessages() {
 		int count = 0;
 		try {
-			if (null != username) {
+			if (null != username && null != password) {
 				int response = httpClient.getChatMessages();
 				if (response >= 200 || response < 300) {
 					if (serverVersion >= 3) {

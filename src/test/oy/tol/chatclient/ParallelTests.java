@@ -10,9 +10,11 @@ import java.util.Collection;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.DynamicTest;
 import org.junit.jupiter.api.RepeatedTest;
+import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestFactory;
 import org.junit.jupiter.api.parallel.Execution;
 import org.junit.jupiter.api.parallel.ExecutionMode;
@@ -30,9 +32,15 @@ public class ParallelTests {
         httpClient2 = new ChatHttpClient(client2, ChatUnitTestSettings.clientSideCertificate);
     }
 
-    @RepeatedTest(100)
+    @Test
+    @BeforeAll
+    @DisplayName("Setting up the test environment")
+    public static void initialize() {
+        assertTrue(ChatUnitTestSettings.readSettingsXML(), () -> "Could not initialize the tests. Check your test setting XML file");
+    }
+    
+    @RepeatedTest(500)
     @Execution(ExecutionMode.CONCURRENT)
-    // @RepeatedTest(100)
     @DisplayName("Get messages in parallel from server")
     void executeChatGet() {
         if (ChatUnitTestSettings.serverVersion < 5) {
@@ -46,14 +54,11 @@ public class ParallelTests {
         }
     }
 
-    // TODO: think how primary keys and indexes should be in messages db
-    // now parallel tests have issues when primary key is username/timestamp when timestamps are exactly the same.
-
     @Execution(ExecutionMode.CONCURRENT)
     @TestFactory
     @DisplayName("First thread A posting chat messages")
-    Collection<DynamicTest> test_parallel_dynamictests1() {
-        final int DYNAMIC_POST_COUNT = 50;
+    Collection<DynamicTest> testParallelDynamicTests1() {
+        final int DYNAMIC_POST_COUNT = 500;
         List<DynamicTest> testArray = new ArrayList<DynamicTest>();
         if (ChatUnitTestSettings.serverVersion < 5) {
             return testArray;
@@ -62,9 +67,9 @@ public class ParallelTests {
             final int passingInt = counter;
             testArray.add(dynamicTest("Dynamic test A" + counter, () -> {
                 int code = httpClient1.postChatMessage("Dynamically posting A-" + passingInt);
-                assertEquals(200, code, () -> "Server returned code " + code);
-                System.out.println(Thread.currentThread().getName() + " => Dynamic test A");
-                TimeUnit.MILLISECONDS.sleep(50);
+                assertTrue((code == 200 || code == 429), () -> "Server returned code " + code + " " + httpClient1.getServerNotification());
+                System.out.println(Thread.currentThread().getName() + " => Parallel test A");
+                TimeUnit.MILLISECONDS.sleep(100);
             }));
         }
         return testArray;
@@ -73,8 +78,8 @@ public class ParallelTests {
     @Execution(ExecutionMode.CONCURRENT)
     @TestFactory
     @DisplayName("Second thread B posting chat messages")
-    Collection<DynamicTest> test_parallel_dynamictests2() {
-        final int DYNAMIC_POST_COUNT = 50;
+    Collection<DynamicTest> testParallelDynamicTests2() {
+        final int DYNAMIC_POST_COUNT = 500;
         List<DynamicTest> testArray = new ArrayList<DynamicTest>();
         if (ChatUnitTestSettings.serverVersion < 5) {
             return testArray;
@@ -83,8 +88,9 @@ public class ParallelTests {
             final int passingInt = counter;
             testArray.add(dynamicTest("Dynamic test B" + counter, () -> {
                 int code = httpClient2.postChatMessage("Dynamically posting B-" + passingInt);
-                assertEquals(200, code, () -> "Server returned code " + code);
-                TimeUnit.MILLISECONDS.sleep(500);
+                assertTrue((code == 200 || code == 429), () -> "Server returned code " + code + " " + httpClient2.getServerNotification());
+                System.out.println(Thread.currentThread().getName() + " => Parallel test B");
+                TimeUnit.MILLISECONDS.sleep(100);
             }));
         }
         return testArray;

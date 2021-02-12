@@ -9,6 +9,7 @@ import static org.junit.jupiter.api.Assertions.fail;
 import java.util.List;
 import java.util.Random;
 
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.RepeatedTest;
@@ -23,11 +24,18 @@ public class HttpHeaderTests implements ChatClientDataProvider {
     private static ChatHttpClient httpClient = null;
     private String username = null;
     private String password = null;
+    
     HttpHeaderTests() {
         httpClient = new ChatHttpClient(this, ChatUnitTestSettings.clientSideCertificate);
     }
 
-    @Order(8)
+    @Test
+    @BeforeAll
+    @DisplayName("Setting up the test environment")
+    public static void initialize() {
+        assertTrue(ChatUnitTestSettings.readSettingsXML(), () -> "Could not initialize the tests. Check your test setting XML file");
+    }
+
     @Test
     @DisplayName("Testing message counts sent and received to/from server.")
     void testModifiedSinceHeaders() {
@@ -52,7 +60,7 @@ public class HttpHeaderTests implements ChatClientDataProvider {
                 for (int looper = 0; looper < MSGS_TO_ADD; looper++) {
                     String message = randomString(120);
                     result = httpClient.postChatMessage(message);
-                    assertTrue(result == 200, () -> "Must get 200 from server");
+                    assertTrue((result == 200 || result == 429), () -> "Must get 200 from server (or 429 if posting too fast).");
                 }
                 // Wait after posting a bit and then get new messages.
                 Thread.sleep(1000);
