@@ -3,6 +3,7 @@ package oy.tol.chatclient;
 import java.io.Console;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.nio.charset.UnsupportedCharsetException;
 import java.security.KeyManagementException;
 import java.security.KeyStoreException;
 import java.security.NoSuchAlgorithmException;
@@ -63,13 +64,18 @@ public class ChatClient implements ChatClientDataProvider {
 	public static void main(String[] args) {
 
 		// Run the client.
-		if (args.length == 2) {
+		// Undocumented feature: use third arg "-http" to use http instead of https.
+		boolean useHttps = true;
+		if (args.length >= 2) {
 			System.out.println("Launching ChatClient with args " + args[0] + " " + args[1]);
 			serverVersion = Integer.parseInt(args[0]);
 			if (serverVersion < 2) {
 				serverVersion = 2;
 			} else if (serverVersion > 5) {
 				serverVersion = 5;
+			}
+			if (args.length == 3 && "-http".equalsIgnoreCase(args[2])) {
+				useHttps = false;
 			}
 		} else {
 			System.out.println("Usage: java -jar chat-client-jar-file 2 ../localhost.cer");
@@ -78,15 +84,18 @@ public class ChatClient implements ChatClientDataProvider {
 			return;
 		}
 		ChatClient client = new ChatClient();
-		client.run(args[1]);
+		client.run(args[1], useHttps);
 	}
 
 	/**
 	 * Runs the show: - Creates the http client - displays the menu - handles
 	 * commands until user enters command /exit.
 	 */
-	public void run(String certificateFileWithPath) {
-		httpClient = new ChatHttpClient(this, certificateFileWithPath);
+	public void run(String certificateFileWithPath, boolean useHttps) {
+		if (!useHttps) {
+			currentServer = "http://localhost:8001";
+		}
+		httpClient = new ChatHttpClient(this, certificateFileWithPath, useHttps);
 		printCommands();
 		printInfo();
 		Console console = System.console();

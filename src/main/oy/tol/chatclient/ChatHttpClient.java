@@ -7,6 +7,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
+import java.net.HttpURLConnection;
 import java.net.URL;
 import java.nio.charset.StandardCharsets;
 import java.security.KeyManagementException;
@@ -56,9 +57,16 @@ public class ChatHttpClient {
 
 	private String certificateFile;
 
+	private boolean useHttpsInRequests = true;
+
 	ChatHttpClient(ChatClientDataProvider provider, String certificateFileWithPath) {
+		this(provider, certificateFileWithPath, true);
+	}
+
+	ChatHttpClient(ChatClientDataProvider provider, String certificateFileWithPath, boolean useHttps) {
 		dataProvider = provider;
 		certificateFile = certificateFileWithPath;
+		useHttpsInRequests = useHttps;
 	}
 
 	public String getServerNotification() {
@@ -82,7 +90,7 @@ public class ChatHttpClient {
 		addr += CHAT;
 		URL url = new URL(addr);
 
-		HttpsURLConnection connection = createTrustingConnectionDebug(url);
+		HttpURLConnection connection = createTrustingConnectionDebug(url);
 		connection.setUseCaches(false);
 		connection.setDefaultUseCaches(false);
 		connection.setRequestProperty("Cache-Control", "no-cache");
@@ -167,7 +175,7 @@ public class ChatHttpClient {
 
 		String auth = dataProvider.getUsername() + ":" + dataProvider.getPassword();
 
-		HttpsURLConnection connection = createTrustingConnectionDebug(url);
+		HttpURLConnection connection = createTrustingConnectionDebug(url);
 
 		byte[] msgBytes;
 		if (dataProvider.getServerVersion() >= 3) {
@@ -222,7 +230,7 @@ public class ChatHttpClient {
 		addr += REGISTRATION;
 		URL url = new URL(addr);
 
-		HttpsURLConnection connection = createTrustingConnectionDebug(url);
+		HttpURLConnection connection = createTrustingConnectionDebug(url);
 
 		byte[] msgBytes;
 		if (dataProvider.getServerVersion() >= 3) {
@@ -268,25 +276,30 @@ public class ChatHttpClient {
 	// For accepting self signed certificates. Not to be used in production
 	// software!
 
-	private HttpsURLConnection createTrustingConnectionDebug(URL url) throws KeyStoreException, CertificateException,
+	private HttpURLConnection createTrustingConnectionDebug(URL url) throws KeyStoreException, CertificateException,
 			NoSuchAlgorithmException, FileNotFoundException, KeyManagementException, IOException {
 		Certificate certificate = CertificateFactory.getInstance("X.509").generateCertificate(new FileInputStream(certificateFile));
 
-		KeyStore keyStore = KeyStore.getInstance("JKS");
-		keyStore.load(null, null);
-		keyStore.setCertificateEntry("localhost", certificate);
-
-		TrustManagerFactory trustManagerFactory = TrustManagerFactory.getInstance("SunX509");
-		trustManagerFactory.init(keyStore);
-
-		SSLContext sslContext = SSLContext.getInstance("TLS");
-		sslContext.init(null, trustManagerFactory.getTrustManagers(), null);
-
-		HttpsURLConnection connection = (HttpsURLConnection) url.openConnection();
-		connection.setSSLSocketFactory(sslContext.getSocketFactory());
-		// All requests use these common timeouts.
-		connection.setConnectTimeout(CONNECT_TIMEOUT);
-		connection.setReadTimeout(REQUEST_TIMEOUT);
-		return connection;
+		if (useHttpsInRequests) {
+			KeyStore keyStore = KeyStore.getInstance("JKS");
+			keyStore.load(null, null);
+			keyStore.setCertificateEntry("localhost", certificate);
+	
+			TrustManagerFactory trustManagerFactory = TrustManagerFactory.getInstance("SunX509");
+			trustManagerFactory.init(keyStore);
+	
+			SSLContext sslContext = SSLContext.getInstance("TLS");
+			sslContext.init(null, trustManagerFactory.getTrustManagers(), null);
+	
+			HttpsURLConnection connection = (HttpsURLConnection) url.openConnection();
+			connection.setSSLSocketFactory(sslContext.getSocketFactory());
+			// All requests use these common timeouts.
+			connection.setConnectTimeout(CONNECT_TIMEOUT);
+			connection.setReadTimeout(REQUEST_TIMEOUT);
+			return connection;
+		} else {
+			HttpURLConnection connection = (HttpURLConnection) url.openConnection();
+			return connection;
+		}
 	}
 }
