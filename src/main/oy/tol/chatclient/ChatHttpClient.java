@@ -278,9 +278,8 @@ public class ChatHttpClient {
 
 	private HttpURLConnection createTrustingConnectionDebug(URL url) throws KeyStoreException, CertificateException,
 			NoSuchAlgorithmException, FileNotFoundException, KeyManagementException, IOException {
-		Certificate certificate = CertificateFactory.getInstance("X.509").generateCertificate(new FileInputStream(certificateFile));
-
 		if (useHttpsInRequests) {
+			Certificate certificate = CertificateFactory.getInstance("X.509").generateCertificate(new FileInputStream(certificateFile));
 			KeyStore keyStore = KeyStore.getInstance("JKS");
 			keyStore.load(null, null);
 			keyStore.setCertificateEntry("localhost", certificate);
