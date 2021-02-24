@@ -67,6 +67,9 @@ public class ChatHttpClient {
 		dataProvider = provider;
 		certificateFile = certificateFileWithPath;
 		useHttpsInRequests = useHttps;
+		if (null == certificateFile) {
+			useHttpsInRequests = false;
+		}
 	}
 
 	public String getServerNotification() {

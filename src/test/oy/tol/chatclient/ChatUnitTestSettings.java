@@ -45,7 +45,13 @@ public class ChatUnitTestSettings {
                 System.exit(-1);
             }
 
-            clientSideCertificate = doc.getElementsByTagName("servercertificate").item(0).getTextContent();
+            NodeList node = doc.getElementsByTagName("servercertificate");
+            if (node != null && node.getLength() > 0) {
+                clientSideCertificate = doc.getElementsByTagName("servercertificate").item(0).getTextContent();
+                if (null != clientSideCertificate && clientSideCertificate.trim().length() == 0) {
+                    clientSideCertificate = null;
+                }
+            }
             String tmpNum = doc.getElementsByTagName("serverversion").item(0).getTextContent();
             serverVersion = Integer.parseInt(tmpNum);
 

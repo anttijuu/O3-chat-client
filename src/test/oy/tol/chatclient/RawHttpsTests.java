@@ -8,6 +8,7 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
+import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.nio.charset.StandardCharsets;
@@ -166,7 +167,7 @@ class RawHttpsTests {
 		addr += CHAT;
 		URL url = new URL(addr);
 
-		HttpsURLConnection connection = createTrustingConnectionDebug(url);
+		HttpURLConnection connection = createTrustingConnectionDebug(url);
 
 		byte[] msgBytes = invalidJSON.getBytes(StandardCharsets.UTF_8);
 
@@ -207,7 +208,7 @@ class RawHttpsTests {
 		addr += REGISTRATION;
 		URL url = new URL(addr);
 
-		HttpsURLConnection connection = createTrustingConnectionDebug(url);
+		HttpURLConnection connection = createTrustingConnectionDebug(url);
 
 		byte[] msgBytes  = invalidRegistrationString.getBytes(StandardCharsets.UTF_8);
 		if (ChatUnitTestSettings.serverVersion >= 3) {
@@ -248,7 +249,7 @@ class RawHttpsTests {
 		addr += REGISTRATION;
 		URL url = new URL(addr);
 
-		HttpsURLConnection connection = createTrustingConnectionDebug(url);
+		HttpURLConnection connection = createTrustingConnectionDebug(url);
 
 		byte[] msgBytes;
 		if (ChatUnitTestSettings.serverVersion >= 3) {
@@ -291,28 +292,30 @@ class RawHttpsTests {
 		return responseCode;
 	}
 
-    private HttpsURLConnection createTrustingConnectionDebug(URL url) throws KeyStoreException, CertificateException,
+    private HttpURLConnection createTrustingConnectionDebug(URL url) throws KeyStoreException, CertificateException,
             NoSuchAlgorithmException, FileNotFoundException, KeyManagementException, IOException {
-        Certificate certificate = CertificateFactory.getInstance("X.509")
-                .generateCertificate(new FileInputStream(ChatUnitTestSettings.clientSideCertificate));
-
-        KeyStore keyStore = KeyStore.getInstance("JKS");
-        keyStore.load(null, null);
-        keyStore.setCertificateEntry("localhost", certificate);
-
-        TrustManagerFactory trustManagerFactory = TrustManagerFactory.getInstance("SunX509");
-        trustManagerFactory.init(keyStore);
-
-        SSLContext sslContext = SSLContext.getInstance("TLS");
-        sslContext.init(null, trustManagerFactory.getTrustManagers(), null);
-
-        HttpsURLConnection connection = (HttpsURLConnection) url.openConnection();
-        connection.setSSLSocketFactory(sslContext.getSocketFactory());
-        // All requests use these common timeouts.
-        connection.setConnectTimeout(CONNECT_TIMEOUT);
-        connection.setReadTimeout(REQUEST_TIMEOUT);
-
-        return connection;
+        if (null != ChatUnitTestSettings.clientSideCertificate) {
+            Certificate certificate = CertificateFactory.getInstance("X.509").generateCertificate(new FileInputStream(ChatUnitTestSettings.clientSideCertificate));
+            KeyStore keyStore = KeyStore.getInstance("JKS");
+            keyStore.load(null, null);
+            keyStore.setCertificateEntry("localhost", certificate);
+    
+            TrustManagerFactory trustManagerFactory = TrustManagerFactory.getInstance("SunX509");
+            trustManagerFactory.init(keyStore);
+    
+            SSLContext sslContext = SSLContext.getInstance("TLS");
+            sslContext.init(null, trustManagerFactory.getTrustManagers(), null);
+    
+            HttpsURLConnection connection = (HttpsURLConnection) url.openConnection();
+            connection.setSSLSocketFactory(sslContext.getSocketFactory());
+            // All requests use these common timeouts.
+            connection.setConnectTimeout(CONNECT_TIMEOUT);
+            connection.setReadTimeout(REQUEST_TIMEOUT);
+            return connection;
+        } else {
+            HttpURLConnection connection = (HttpURLConnection) url.openConnection();
+            return connection;
+        }
     }
 
 }
