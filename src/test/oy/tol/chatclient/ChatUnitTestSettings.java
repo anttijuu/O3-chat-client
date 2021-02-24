@@ -30,10 +30,10 @@ public class ChatUnitTestSettings {
     public static boolean readSettingsXML() {
         try {
             String fileName = System.getProperty("testsettings");
-            System.out.println("Test setting file: " + fileName);
             if (fileName == null) {
                 fileName = "test-config-1.xml";
             }
+            System.out.println("Test setting file: " + fileName);
             File fXmlFile = new File(fileName);
             DocumentBuilderFactory dbFactory = DocumentBuilderFactory.newInstance();
             DocumentBuilder dBuilder = dbFactory.newDocumentBuilder();

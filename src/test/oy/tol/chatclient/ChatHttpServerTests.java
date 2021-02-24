@@ -39,6 +39,7 @@ public class ChatHttpServerTests implements ChatClientDataProvider {
     @DisplayName("Setting up the test environment")
     public static void initialize() {
         assertTrue(ChatUnitTestSettings.readSettingsXML(), () -> "Could not initialize the tests. Check your test setting XML file");
+        System.out.println("Initializing ChatHttpServerTests");
     }
     
     @Test 
