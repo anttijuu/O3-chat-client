@@ -46,6 +46,7 @@ public class ChatHttpServerTests implements ChatClientDataProvider {
     @Order(1)
     @DisplayName("Testing HTTP GET /chat without valid user credentials, must throw")
     void getWithoutCredentials() {
+        System.out.println("Testing HTTP GET /chat without valid user credentials, must throw");
         assertThrows(Exception.class, () -> httpClient.getChatMessages());
     }
 
@@ -53,6 +54,7 @@ public class ChatHttpServerTests implements ChatClientDataProvider {
     @Order(2)
     @DisplayName("Testing HTTP GET /chat with invalid user credentials, must throw")
     void getWithInvalidCredentials() {
+        System.out.println("Testing HTTP GET /chat with invalid user credentials, must throw");
         username = "randomnonexistentusernamehere";
         password = "invalidpasswordtoo";
         assertThrows(Exception.class, () -> httpClient.getChatMessages());
@@ -62,6 +64,7 @@ public class ChatHttpServerTests implements ChatClientDataProvider {
     @Order(3)
     @DisplayName("Testing user registration")
     void testUserRegistration() {
+        System.out.println("Testing user registration");
         username = randomString(15);
         password = randomString(15);
         email = randomString(30);
@@ -77,6 +80,7 @@ public class ChatHttpServerTests implements ChatClientDataProvider {
     @DisplayName("Testing getting messages from server")
     void testGetMessages() {
         try {
+            System.out.println("Testing getting messages from server");
             username = ChatUnitTestSettings.existingUser;
             password = ChatUnitTestSettings.existingPassword;
             int result = httpClient.getChatMessages();
@@ -90,6 +94,7 @@ public class ChatHttpServerTests implements ChatClientDataProvider {
     @DisplayName("Testing posting empty messages to server")
     void testPostEmptyMessages() {
         try {
+            System.out.println("Testing posting empty messages to server");
             username = ChatUnitTestSettings.existingUser;
             password = ChatUnitTestSettings.existingPassword;
             String message = "";
@@ -104,6 +109,7 @@ public class ChatHttpServerTests implements ChatClientDataProvider {
     @DisplayName("Testing posting whitespace messages to server")
     void testPostWhitespaceMessages() {
         try {
+            System.out.println("Testing posting whitespace messages to server");
             username = ChatUnitTestSettings.existingUser;
             password = ChatUnitTestSettings.existingPassword;
             String message = "    ";
@@ -119,6 +125,7 @@ public class ChatHttpServerTests implements ChatClientDataProvider {
     @DisplayName("Testing posting messages to server")
     void testPostMessages() {
         try {
+            System.out.println("Testing posting messages to server");
             username = ChatUnitTestSettings.existingUser;
             password = ChatUnitTestSettings.existingPassword;
             String message = randomString(120);
@@ -134,6 +141,7 @@ public class ChatHttpServerTests implements ChatClientDataProvider {
     @DisplayName("Testing posting and getting messages to and from server")
     void testHeavyGetPostMessages() {
         try {
+            System.out.println("Testing posting and getting messages to and from server");
             // Must be an existing user in the database.
             username = ChatUnitTestSettings.existingUser;
             password = ChatUnitTestSettings.existingPassword;
@@ -161,7 +169,7 @@ public class ChatHttpServerTests implements ChatClientDataProvider {
 
 	@Override
 	public String getServer() {
-		return "https://localhost:8001/";
+        return ChatUnitTestSettings.dataProvider.getServer();
 	}
 
 	@Override

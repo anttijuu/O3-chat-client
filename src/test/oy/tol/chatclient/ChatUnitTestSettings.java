@@ -27,6 +27,8 @@ public class ChatUnitTestSettings {
     private static ChatHttpClient httpClient = null;
     public static TestDataProvider dataProvider = new TestDataProvider();
 
+    // TODO: Keep the server URL only here in one place
+    // TODO: if no cert/-http config, remove s from https
     public static boolean readSettingsXML() {
         try {
             String fileName = System.getProperty("testsettings");
@@ -99,14 +101,17 @@ public class ChatUnitTestSettings {
         return (existingUser != null && 
                 existingPassword != null && 
                 existingUser2 != null && 
-                existingPassword2 != null && 
-                clientSideCertificate != null); 
+                existingPassword2 != null); 
     }
 
     public static class TestDataProvider implements ChatClientDataProvider {
         @Override
         public String getServer() {
-            return "https://localhost:8001";
+            if (clientSideCertificate != null) {
+                return "https://localhost:8001/";
+            } else {
+                return "http://localhost:8001/";
+            }
         }
 
         @Override

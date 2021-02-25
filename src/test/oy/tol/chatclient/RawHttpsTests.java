@@ -1,7 +1,5 @@
 package oy.tol.chatclient;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-
 import java.io.BufferedReader;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -9,7 +7,6 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.net.HttpURLConnection;
-import java.net.MalformedURLException;
 import java.net.URL;
 import java.nio.charset.StandardCharsets;
 import java.security.KeyManagementException;
@@ -20,26 +17,19 @@ import java.security.cert.Certificate;
 import java.security.cert.CertificateException;
 import java.security.cert.CertificateFactory;
 import java.util.Base64;
-import java.util.List;
-import java.util.Random;
 
 import javax.net.ssl.HttpsURLConnection;
 import javax.net.ssl.SSLContext;
 import javax.net.ssl.TrustManagerFactory;
 
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.Order;
-import org.junit.jupiter.api.RepeatedTest;
 
-import static org.junit.jupiter.api.MethodOrderer.OrderAnnotation;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.junit.jupiter.api.Assertions.fail;
-import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import org.json.JSONObject;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.DisplayName;
-import org.junit.jupiter.api.TestMethodOrder;
 
 @DisplayName("Tests using registration and chatting with HttpsUrlConnection")
 class RawHttpsTests {
@@ -48,7 +38,6 @@ class RawHttpsTests {
     private static final String CHAT = "chat";
     private static final int CONNECT_TIMEOUT = 10 * 1000;
     private static final int REQUEST_TIMEOUT = 30 * 1000;
-    String serverAddr = "https://localhost:8001/";
 
     @Test
     @BeforeAll
@@ -63,6 +52,7 @@ class RawHttpsTests {
     @DisplayName("Testing registration with empty strings")
     void testEmptyRegistrationStrings() {
         try {
+            System.out.println("Testing registration with empty strings");
             int status = registerUser("", "", "");
             assertTrue(status >= 400, () -> "Server should return error 4xx.");
         } catch (KeyManagementException e) {
@@ -82,6 +72,7 @@ class RawHttpsTests {
     @DisplayName("Testing registration with whitespaces in registration strings")
     void testWhitespaceRegistrationStrings() {
         try {
+            System.out.println("Testing registration with whitespaces in registration strings");
             int status = registerUser("  ", "  ", "  ");
             assertTrue(status >= 400, () -> "Server should return error 4xx.");
         } catch (KeyManagementException e) {
@@ -101,6 +92,7 @@ class RawHttpsTests {
     @DisplayName("Testing registration with invalid registration strings")
     void testInvalidRegistrationStrings() {
         try {
+            System.out.println("Testing registration with invalid registration strings");
             String invalid = "";
             int status = registerWithInvalidContent(invalid);
             assertTrue(status >= 400, () -> "Server should return error 4xx.");
@@ -134,6 +126,7 @@ class RawHttpsTests {
         if (ChatUnitTestSettings.serverVersion < 3) {
             return;
         }
+        System.out.println("Send invalid chat JSON");
         try {
             String invalid = "";
             int status = postInvalidChatJSONMessage(invalid, "application/json");
@@ -164,7 +157,8 @@ class RawHttpsTests {
 
     private int postInvalidChatJSONMessage(String invalidJSON, String contentType)  throws KeyManagementException,
     KeyStoreException, CertificateException, NoSuchAlgorithmException, FileNotFoundException, IOException {
-        String addr = serverAddr;
+        String addr = ChatUnitTestSettings.dataProvider.getServer();
+        ;
 		addr += CHAT;
 		URL url = new URL(addr);
 
@@ -205,7 +199,7 @@ class RawHttpsTests {
 
     private int registerWithInvalidContent(String invalidRegistrationString) throws KeyManagementException,
             KeyStoreException, CertificateException, NoSuchAlgorithmException, FileNotFoundException, IOException {
-		String addr = serverAddr;
+		String addr = ChatUnitTestSettings.dataProvider.getServer();
 		addr += REGISTRATION;
 		URL url = new URL(addr);
 
@@ -246,7 +240,7 @@ class RawHttpsTests {
 
     private int registerUser(String withUsername, String withPassword, String withEmail) throws KeyManagementException, KeyStoreException, CertificateException,
 			NoSuchAlgorithmException, IOException {
-		String addr = serverAddr;
+		String addr = ChatUnitTestSettings.dataProvider.getServer();
 		addr += REGISTRATION;
 		URL url = new URL(addr);
 

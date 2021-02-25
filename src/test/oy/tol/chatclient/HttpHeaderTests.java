@@ -1,8 +1,6 @@
 package oy.tol.chatclient;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.junit.jupiter.api.Assertions.fail;
 
@@ -11,15 +9,9 @@ import java.util.Random;
 
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.DisplayName;
-import org.junit.jupiter.api.Order;
-import org.junit.jupiter.api.RepeatedTest;
 import org.junit.jupiter.api.Test;
 
 public class HttpHeaderTests implements ChatClientDataProvider {
-    // TODO: add here only tests that can be done with the final version
-    // - test that when you post one chat, you get one back.
-    // - And when you post two, you get two back.
-    // Tests assume no one else is using the server a the same time so we can do that.
 
     private static ChatHttpClient httpClient = null;
     private String username = null;
@@ -43,7 +35,7 @@ public class HttpHeaderTests implements ChatClientDataProvider {
         if (ChatUnitTestSettings.serverVersion < 5) {
             return;
         }
-        
+        System.out.println("Testing message counts sent and received to/from server.");
         try {
             // Must be an existing user in the database.
             username = ChatUnitTestSettings.existingUser;
@@ -80,7 +72,7 @@ public class HttpHeaderTests implements ChatClientDataProvider {
 
 	@Override
 	public String getServer() {
-		return "https://localhost:8001/";
+        return ChatUnitTestSettings.dataProvider.getServer();
 	}
 
 	@Override

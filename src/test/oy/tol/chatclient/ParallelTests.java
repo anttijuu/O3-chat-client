@@ -1,6 +1,5 @@
 package oy.tol.chatclient;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.junit.jupiter.api.Assertions.fail;
 import static org.junit.jupiter.api.DynamicTest.dynamicTest;
@@ -22,6 +21,7 @@ import org.junit.jupiter.api.parallel.ExecutionMode;
 public class ParallelTests {
 
     private static ChatHttpClient httpClient1 = null;
+    private static ChatHttpClient httpClient1get = null;
     private static ChatHttpClient httpClient2 = null;
 
     
@@ -30,6 +30,7 @@ public class ParallelTests {
         client2 = new Client2();
         httpClient1 = new ChatHttpClient(client1, ChatUnitTestSettings.clientSideCertificate);
         httpClient2 = new ChatHttpClient(client2, ChatUnitTestSettings.clientSideCertificate);
+        httpClient1get = new ChatHttpClient(client1, ChatUnitTestSettings.clientSideCertificate);
     }
 
     @Test
@@ -48,7 +49,7 @@ public class ParallelTests {
             return;
         }
         try {
-            int code = httpClient1.getChatMessages();
+            int code = httpClient1get.getChatMessages();
             assertTrue((code == 200 || code == 204), () -> "Must get 200 or 204 from server");
         } catch (Exception e) {
             fail("Getting messages from server in parallel failed: " + e.getMessage());
@@ -100,7 +101,7 @@ public class ParallelTests {
     class Client1 implements ChatClientDataProvider {
         @Override
         public String getServer() {
-            return "https://localhost:8001/";
+            return ChatUnitTestSettings.dataProvider.getServer();
         }
         @Override
         public String getUsername() {
@@ -131,7 +132,7 @@ public class ParallelTests {
     class Client2 implements ChatClientDataProvider {
         @Override
         public String getServer() {
-            return "https://localhost:8001/";
+            return ChatUnitTestSettings.dataProvider.getServer();
         }
         @Override
         public String getUsername() {
