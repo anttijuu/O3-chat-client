@@ -401,14 +401,14 @@ public class ChatClient implements ChatClientDataProvider {
 			try {
 				int response = httpClient.postChatMessage(message);
 				if (response < 200 || response >= 300) {
-					println("Error from server: " + response + " " + httpClient.getServerNotification(),colorError);
+					println("Error from server: " + response + " " + httpClient.getServerNotification(), colorError);
 				}
 			} catch (KeyManagementException | KeyStoreException | CertificateException | NoSuchAlgorithmException
 					| FileNotFoundException e) {
 				println(" **** ERROR in server certificate",colorError);
 				println(e.getLocalizedMessage(), colorError);
 			} catch (IOException e) {
-				println(" **** ERROR in posting message to server " + currentServer,colorError);
+				println(" **** ERROR in posting message to server " + currentServer, colorError);
 				println(e.getLocalizedMessage(), colorError);
 			}
 		} else {

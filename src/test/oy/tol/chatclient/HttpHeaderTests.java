@@ -7,6 +7,7 @@ import static org.junit.jupiter.api.Assertions.fail;
 import java.util.List;
 import java.util.Random;
 
+import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -28,6 +29,13 @@ public class HttpHeaderTests implements ChatClientDataProvider {
         assertTrue(ChatUnitTestSettings.readSettingsXML(), () -> "Could not initialize the tests. Check your test setting XML file");
         System.out.println("Initializing HttpHeaderTests");
     }
+
+    @Test
+    @AfterAll
+    public static void teardown() {
+        System.out.println("Finished HttpHeaderTests.");
+    }
+
 
     @Test
     @DisplayName("Testing message counts sent and received to/from server.")

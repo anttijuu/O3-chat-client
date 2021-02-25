@@ -28,6 +28,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.junit.jupiter.api.Assertions.fail;
 
 import org.json.JSONObject;
+import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.DisplayName;
 
@@ -47,6 +48,11 @@ class RawHttpsTests {
         System.out.println("Initializing RawHttpsTests");
     }
 
+    @Test
+    @AfterAll
+    public static void teardown() {
+        System.out.println("Finished RawHttpsTests.");
+    }
     
     @Test
     @DisplayName("Testing registration with empty strings")

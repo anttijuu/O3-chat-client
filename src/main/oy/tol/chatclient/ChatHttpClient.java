@@ -217,7 +217,7 @@ public class ChatHttpClient {
 			// in the serverNotification. This way the tests do not fail to indicate server error
 			// because this is not a server error.
 			try {
-				InputStream in = connection.getInputStream();
+				InputStream in = connection.getErrorStream();
 				if (null != in) {
 					BufferedReader reader = new BufferedReader(new InputStreamReader(in, StandardCharsets.UTF_8));
 					String inputLine;

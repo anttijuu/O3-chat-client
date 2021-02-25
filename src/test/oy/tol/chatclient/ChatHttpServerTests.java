@@ -14,6 +14,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.junit.jupiter.api.Assertions.fail;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
+import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.TestMethodOrder;
@@ -42,6 +43,12 @@ public class ChatHttpServerTests implements ChatClientDataProvider {
         System.out.println("Initializing ChatHttpServerTests");
     }
     
+    @Test
+    @AfterAll
+    public static void teardown() {
+        System.out.println("Finished ChatHttpServerTests.");
+    }
+
     @Test 
     @Order(1)
     @DisplayName("Testing HTTP GET /chat without valid user credentials, must throw")

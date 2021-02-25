@@ -9,6 +9,7 @@ import java.util.Collection;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
+import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.DynamicTest;
@@ -41,6 +42,12 @@ public class ParallelTests {
         System.out.println("Initializing ParallelTests");
     }
     
+    @Test
+    @AfterAll
+    public static void teardown() {
+        System.out.println("Finished ParallelTests.");
+    }
+
     @RepeatedTest(500)
     @Execution(ExecutionMode.CONCURRENT)
     @DisplayName("Get messages in parallel from server")
@@ -65,12 +72,15 @@ public class ParallelTests {
         if (ChatUnitTestSettings.serverVersion < 5) {
             return testArray;
         }
+        System.out.println(Thread.currentThread().getName() + " => Parallel tests A starting...");
         for (int counter = 0; counter < DYNAMIC_POST_COUNT; counter++) {
             final int passingInt = counter;
             testArray.add(dynamicTest("Dynamic test A" + counter, () -> {
                 int code = httpClient1.postChatMessage("Dynamically posting A-" + passingInt);
                 assertTrue((code == 200 || code == 429), () -> "Server returned code " + code + " " + httpClient1.getServerNotification());
-                System.out.println(Thread.currentThread().getName() + " => Parallel test A");
+                if (code >= 400) {
+                    System.out.println("Server returned " + code + " " + httpClient1.getServerNotification());
+                } 
                 TimeUnit.MILLISECONDS.sleep(100);
             }));
         }
@@ -86,12 +96,15 @@ public class ParallelTests {
         if (ChatUnitTestSettings.serverVersion < 5) {
             return testArray;
         }
+        System.out.println(Thread.currentThread().getName() + " => Parallel tests B starting...");
         for (int counter = 0; counter < DYNAMIC_POST_COUNT; counter++) {
             final int passingInt = counter;
             testArray.add(dynamicTest("Dynamic test B" + counter, () -> {
                 int code = httpClient2.postChatMessage("Dynamically posting B-" + passingInt);
                 assertTrue((code == 200 || code == 429), () -> "Server returned code " + code + " " + httpClient2.getServerNotification());
-                System.out.println(Thread.currentThread().getName() + " => Parallel test B");
+                if (code >= 400) {
+                    System.out.println("Server returned " + code + " " + httpClient2.getServerNotification());
+                } 
                 TimeUnit.MILLISECONDS.sleep(100);
             }));
         }
