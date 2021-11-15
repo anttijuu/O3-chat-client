@@ -80,6 +80,10 @@ public class ChatHttpClient {
 		return newMessages;
 	}
 
+	public void resetLatestDataTimestamp() {
+		latestDataFromServerIsFrom = null;
+	}
+
 	public List<String> getPlainStringMessages() {
 		return plainStringMessages;
 	}
@@ -242,6 +246,8 @@ public class ChatHttpClient {
 		addr += REGISTRATION;
 		URL url = new URL(addr);
 
+		resetLatestDataTimestamp();
+		
 		HttpURLConnection connection = createTrustingConnectionDebug(url);
 
 		byte[] msgBytes;

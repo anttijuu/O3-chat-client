@@ -277,6 +277,7 @@ public class ChatClient implements ChatClientDataProvider {
 			nick = null;
 			return;
 		}
+		httpClient.resetLatestDataTimestamp();
 		if (forRegistering) {
 			print("Enter email > ", colorInfo);
 			String newEmail = console.readLine().trim();

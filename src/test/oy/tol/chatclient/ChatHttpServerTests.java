@@ -112,7 +112,7 @@ public class ChatHttpServerTests implements ChatClientDataProvider {
 		}
     }
 
-    @Order(5)
+    @Order(6)
     @DisplayName("Testing posting whitespace messages to server")
     void testPostWhitespaceMessages() {
         try {
