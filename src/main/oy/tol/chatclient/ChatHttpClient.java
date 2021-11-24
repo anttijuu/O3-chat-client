@@ -34,6 +34,9 @@ import org.json.JSONObject;
 
 public class ChatHttpClient {
 
+	private static final String TEXT_PLAIN = "text/plain";
+	private static final String APPLICATION_JSON = "application/json";
+	
 	// Different paths (contexts) the server supports and this client implements.
 	private static final String CHAT = "chat";
 	private static final String REGISTRATION = "registration";
@@ -103,12 +106,8 @@ public class ChatHttpClient {
 		connection.setRequestProperty("Cache-Control", "no-cache");
 
 		connection.setRequestMethod("GET");
-		if (dataProvider.getServerVersion() >= 3) {
-			connection.setRequestProperty("Content-Type", "application/json");
-		} else {
-			connection.setRequestProperty("Content-Type", "text/plain");
-		}
-		if (dataProvider.getServerVersion() >= 5 && null != latestDataFromServerIsFrom) {
+		connection.setRequestProperty("Content-Type", dataProvider.getContentTypeUsed());
+		if (dataProvider.useModifiedSinceHeaders() && null != latestDataFromServerIsFrom) {
 			connection.setRequestProperty("If-Modified-Since", latestDataFromServerIsFrom);
 		}
 
@@ -121,13 +120,13 @@ public class ChatHttpClient {
 		if (responseCode == 204) {
 			newMessages = null;
 		} else if (responseCode >= 200 && responseCode < 300) {
-			if (dataProvider.getServerVersion() >= 5) {
+			if (dataProvider.useModifiedSinceHeaders()) {
 				latestDataFromServerIsFrom = connection.getHeaderField("Last-Modified");
 			}
 			String input;
 			BufferedReader in = new BufferedReader(
 					new InputStreamReader(connection.getInputStream(), StandardCharsets.UTF_8));
-			if (dataProvider.getServerVersion() >= 3) {
+			if (dataProvider.getContentTypeUsed().equalsIgnoreCase(APPLICATION_JSON)) {
 				String totalInput = "";
 				while ((input = in.readLine()) != null) {
 					totalInput += input;
@@ -185,7 +184,7 @@ public class ChatHttpClient {
 		HttpURLConnection connection = createTrustingConnectionDebug(url);
 
 		byte[] msgBytes;
-		if (dataProvider.getServerVersion() >= 3) {
+		if (dataProvider.getContentTypeUsed().equalsIgnoreCase(APPLICATION_JSON)) {
 			JSONObject msg = new JSONObject();
 			msg.put("user", dataProvider.getNick());
 			msg.put("message", message);
@@ -193,10 +192,10 @@ public class ChatHttpClient {
 			String dateText = now.format(jsonDateFormatter);
 			msg.put("sent", dateText);
 			msgBytes = msg.toString().getBytes(StandardCharsets.UTF_8);
-			connection.setRequestProperty("Content-Type", "application/json");
+			connection.setRequestProperty("Content-Type", APPLICATION_JSON);
 		} else {
 			msgBytes = message.getBytes("UTF-8");
-			connection.setRequestProperty("Content-Type", "text/plain");
+			connection.setRequestProperty("Content-Type", TEXT_PLAIN);
 		}
 		connection.setRequestMethod("POST");
 		connection.setDoOutput(true);
@@ -251,17 +250,17 @@ public class ChatHttpClient {
 		HttpURLConnection connection = createTrustingConnectionDebug(url);
 
 		byte[] msgBytes;
-		if (dataProvider.getServerVersion() >= 3) {
+		if (dataProvider.getContentTypeUsed().equalsIgnoreCase(APPLICATION_JSON)) {
 			JSONObject registrationMsg = new JSONObject();
 			registrationMsg.put("username", dataProvider.getUsername());
 			registrationMsg.put("password", dataProvider.getPassword());
 			registrationMsg.put("email", dataProvider.getEmail());
 			msgBytes = registrationMsg.toString().getBytes(StandardCharsets.UTF_8);
-			connection.setRequestProperty("Content-Type", "application/json");
+			connection.setRequestProperty("Content-Type", APPLICATION_JSON);
 		} else {
 			String registrationMsg = dataProvider.getUsername() + ":" + dataProvider.getPassword();
 			msgBytes = registrationMsg.getBytes("UTF-8");
-			connection.setRequestProperty("Content-Type", "text/plain");
+			connection.setRequestProperty("Content-Type", TEXT_PLAIN);
 		}
 
 		connection.setRequestMethod("POST");

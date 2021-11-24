@@ -136,9 +136,16 @@ public class ParallelTests {
             return "not needed in this test";
         }
     
-        @Override
         public int getServerVersion() {
             return ChatUnitTestSettings.serverVersion;
+        }
+        @Override
+        public String getContentTypeUsed() {
+            return ChatUnitTestSettings.dataProvider.getContentTypeUsed();
+        }
+        @Override
+        public boolean useModifiedSinceHeaders() {
+            return ChatUnitTestSettings.dataProvider.useModifiedSinceHeaders();
         }
     }
     private static Client1 client1;
@@ -167,9 +174,16 @@ public class ParallelTests {
             return "not needed in this test";
         }
     
-        @Override
         public int getServerVersion() {
             return ChatUnitTestSettings.serverVersion;
+        }
+        @Override
+        public String getContentTypeUsed() {
+            return ChatUnitTestSettings.dataProvider.getContentTypeUsed();
+        }
+        @Override
+        public boolean useModifiedSinceHeaders() {
+            return ChatUnitTestSettings.dataProvider.useModifiedSinceHeaders();
         }
     }
     private static Client2 client2;

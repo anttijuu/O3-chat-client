@@ -199,11 +199,6 @@ public class ChatHttpServerTests implements ChatClientDataProvider {
 		return email;
 	}
 
-	@Override
-	public int getServerVersion() {
-		return ChatUnitTestSettings.serverVersion;
-	}
-
     private String randomString(int length) {
         int leftLimit = 97; // letter 'a'
         int rightLimit = 122; // letter 'z'
@@ -215,6 +210,22 @@ public class ChatHttpServerTests implements ChatClientDataProvider {
           .toString();
     
         return generatedString;
+    }
+
+    @Override
+    public String getContentTypeUsed() {
+        if (ChatUnitTestSettings.dataProvider.getServerVersion() < 3) {
+            return "text/plain";
+        }
+        return "application/json";
+    }
+
+    @Override
+    public boolean useModifiedSinceHeaders() {
+        if (ChatUnitTestSettings.dataProvider.getServerVersion() >= 5) {
+            return true;
+        }
+        return false;
     }
 
 }

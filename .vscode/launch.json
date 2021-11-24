@@ -4,6 +4,13 @@
     // For more information, visit: https://go.microsoft.com/fwlink/?linkid=830387
     "version": "0.2.0",
     "configurations": [
+    {
+        "type": "java",
+        "name": "Launch with Arguments Prompt",
+        "request": "launch",
+        "mainClass": "",
+        "args": "${command:SpecifyProgramArgs}"
+    },
         {
             "type": "java",
             "name": "Launch Current File",
@@ -16,7 +23,7 @@
             "request": "launch",
             "mainClass": "oy.tol.chatclient.ChatClient",
             "projectName": "ChatClient",
-            "args": ["5","/Users/anttijuustila/workspace/O3/O3-chat-client/localhost.cer"]
+            "args": ["/Users/anttijuustila/workspace/O3/O3-chat-client/chatclient.properties"]
         }
     ]
 }

@@ -103,7 +103,6 @@ public class HttpHeaderTests implements ChatClientDataProvider {
 		return "";
 	}
 
-	@Override
 	public int getServerVersion() {
 		return ChatUnitTestSettings.serverVersion;
 	}
@@ -119,6 +118,16 @@ public class HttpHeaderTests implements ChatClientDataProvider {
           .toString();
     
         return generatedString;
+    }
+
+    @Override
+    public String getContentTypeUsed() {
+        return ChatUnitTestSettings.dataProvider.getContentTypeUsed();
+    }
+
+    @Override
+    public boolean useModifiedSinceHeaders() {
+        return ChatUnitTestSettings.dataProvider.useModifiedSinceHeaders();
     }
 
 }

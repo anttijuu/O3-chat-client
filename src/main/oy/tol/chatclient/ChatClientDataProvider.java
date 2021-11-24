@@ -6,5 +6,6 @@ public interface ChatClientDataProvider {
 	String getPassword();
 	String getNick();
 	String getEmail();
-	int getServerVersion();
+	String getContentTypeUsed();
+	boolean useModifiedSinceHeaders();
 }

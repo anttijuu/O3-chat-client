@@ -1,14 +1,16 @@
 package oy.tol.chatclient;
 
 import java.io.Console;
+import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.nio.charset.UnsupportedCharsetException;
 import java.security.KeyManagementException;
 import java.security.KeyStoreException;
 import java.security.NoSuchAlgorithmException;
 import java.security.cert.CertificateException;
 import java.util.List;
+import java.util.Properties;
 import java.util.Timer;
 import java.util.TimerTask;
 
@@ -37,6 +39,9 @@ public class ChatClient implements ChatClientDataProvider {
 	private static final int AUTO_FETCH_INTERVAL = 1000; // ms
 
 	private String currentServer = SERVER; // URL of the server without paths.
+	private String clientCertificateFile = null; // The client cert for the server.
+	private String payloadFormat = null;
+	private boolean useModifiedHeaders = false;
 	private String username = null; // Registered & logged user.
 	private String password = null; // The password in clear text.
 	private String email = null; // Email address of user, needed for registering.
@@ -62,40 +67,36 @@ public class ChatClient implements ChatClientDataProvider {
 	public static int serverVersion = 3;
 
 	public static void main(String[] args) {
-
-		// Run the client.
-		// Undocumented feature: use third arg "-http" to use http instead of https.
-		boolean useHttps = true;
-		if (args.length >= 2) {
-			System.out.println("Launching ChatClient with args " + args[0] + " " + args[1]);
-			serverVersion = Integer.parseInt(args[0]);
-			if (serverVersion < 2) {
-				serverVersion = 2;
-			} else if (serverVersion > 5) {
-				serverVersion = 5;
-			}
-			if (args.length == 3 && "-http".equalsIgnoreCase(args[2])) {
-				useHttps = false;
+		if (args.length == 1) {								
+			try {
+				System.out.println("Launching ChatClient with config file " + args[0]);
+				ChatClient client = new ChatClient();
+				client.run(args[0]);
+			} catch (Exception e) {
+				System.out.println("Failed to run the ChatClient");
+				System.out.println("Reason: " + e.getLocalizedMessage());
+				e.printStackTrace();
 			}
 		} else {
-			System.out.println("Usage: java -jar chat-client-jar-file 2 ../localhost.cer");
-			System.out.println("Where first parameter is the server version number (exercise number),");
-			System.out.println("and the 2nd parameter is the server's client certificate file with path.");
+			System.out.println("Usage: java -jar chat-client-jar-file chatclient.properties");
+			System.out.println("Where chatclient.properties is the client configuration file");
 			return;
 		}
-		ChatClient client = new ChatClient();
-		client.run(args[1], useHttps);
 	}
 
 	/**
 	 * Runs the show: - Creates the http client - displays the menu - handles
 	 * commands until user enters command /exit.
 	 */
-	public void run(String certificateFileWithPath, boolean useHttps) {
-		if (!useHttps) {
-			currentServer = "http://localhost:8001";
+	public void run(String configFile) throws IOException {
+		println("Reading configuration...", colorInfo);
+		readConfiguration(configFile);
+
+		boolean useHttps = false;
+		if (currentServer.contains("https")) {
+			useHttps = true;
 		}
-		httpClient = new ChatHttpClient(this, certificateFileWithPath, useHttps);
+		httpClient = new ChatHttpClient(this, clientCertificateFile, useHttps);
 		printCommands();
 		printInfo();
 		Console console = System.console();
@@ -440,7 +441,7 @@ public class ChatClient implements ChatClientDataProvider {
 	 */
 	private void printInfo() {
 		println("Server: " + currentServer, colorInfo);
-		println("Server version assumed: " + serverVersion, colorInfo);
+		println("Content type used: " + payloadFormat, colorInfo);
 		println("User: " + username, colorInfo);
 		println("Nick: " + nick, colorInfo);
 		println("Autofetch is " + (autoFetch ? "on" : "off"), colorInfo);
@@ -462,6 +463,28 @@ public class ChatClient implements ChatClientDataProvider {
 			System.out.println(item);
 		}
 	}
+
+	private void readConfiguration(String configFileName) throws FileNotFoundException, IOException {
+		System.out.println("Using configuration: " + configFileName);
+		File configFile = new File(configFileName);
+		Properties config = new Properties();
+		FileInputStream istream;
+		istream = new FileInputStream(configFile);
+		config.load(istream);
+		String protocol = config.getProperty("protocol", "http");
+		String server = config.getProperty("server", "localhost:10000");
+		currentServer = protocol + "://" + server;
+		clientCertificateFile = config.getProperty("certfile", "");
+		payloadFormat = config.getProperty("format", "text/plain");
+		if (config.getProperty("modified-headers", "false").equalsIgnoreCase("true")) {
+			useModifiedHeaders = true;
+		}
+		if (config.getProperty("usecolor", "false").equalsIgnoreCase("true")) {
+			useColorOutput = true;
+		}
+		istream.close();
+	}
+	
 	/*
 	 * Implementation of the ChatClientDataProvider interface. The ChatHttpClient
 	 * calls these methods to get configuration info needed in communication with
@@ -494,8 +517,14 @@ public class ChatClient implements ChatClientDataProvider {
 	}
 
 	@Override
-	public int getServerVersion() {
-		return serverVersion;
+	public String getContentTypeUsed() {
+		return payloadFormat;
 	}
+
+	@Override
+	public boolean useModifiedSinceHeaders() {
+		return useModifiedHeaders;
+	}
+
 
 }

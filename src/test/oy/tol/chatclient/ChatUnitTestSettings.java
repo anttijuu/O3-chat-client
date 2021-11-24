@@ -108,9 +108,9 @@ public class ChatUnitTestSettings {
         @Override
         public String getServer() {
             if (clientSideCertificate != null) {
-                return "https://localhost:8001/";
+                return "https://localhost:10001/";
             } else {
-                return "http://localhost:8001/";
+                return "http://localhost:10001/";
             }
         }
 
@@ -134,9 +134,24 @@ public class ChatUnitTestSettings {
             return "no email sorry";
         }
 
-        @Override
         public int getServerVersion() {
             return ChatUnitTestSettings.serverVersion;
+        }
+
+        @Override
+        public String getContentTypeUsed() {
+            if (getServerVersion() < 3) {
+                return "text/plain";
+            }
+            return "application/json";
+        }
+
+        @Override
+        public boolean useModifiedSinceHeaders() {
+            if (getServerVersion() >= 5) {
+                return true;
+            }
+            return false;
         }
     }
 
