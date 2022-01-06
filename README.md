@@ -68,7 +68,7 @@ You can also build and run the client from an IDE, e.g. Visual Studio Code or Ec
 
 The console UI in Eclipse may not work if debugging within Eclipse. In that case run the client from the command line.
 
-Windows Command prompt does not by default support UTF-8, so any special chars may end up not transferring properly. Prefer using a terminal which does support UTF-8, or even better, use a proper terminal app such as Terminus (Win/Linux/macOS) or iTerm (macOS).
+Windows Command prompt does not by default support UTF-8, so any special chars may end up not transferring properly. Prefer using the new Windows Terminal which does support UTF-8, or even better, use a proper terminal app such as Terminus (Win/Linux/macOS) or iTerm (macOS).
 
 ## Preparing the client
 
@@ -90,14 +90,12 @@ Using the web browser:
 1. Using your web browser, access the server at `https://localhost:8001/chat`, assuming the server listens to port 8001.
 1. You will likely get a warning about non secure certificate.
 1. View the certificate (see link below for browser specific info), either from the warning or by clicking the browser's lock symbol to view the site certificate.
-1. When viewing the certificate, you then save it to the local computer. How this happens depends on the browser, so see the link below.
+1. When viewing the certificate, you then save it to the local computer. How this happens depends on the browser, so check out [this link](https://www.shellhacks.com/get-ssl-certificate-from-server-site-url-export-download/).
 1. Save the certificate as `clientside.cer` to the client app source directory, for example.
-
-For browser specific instructions on how to do this, check out [this link](https://www.shellhacks.com/get-ssl-certificate-from-server-site-url-export-download/).
 
 Next you should read how to run the client either form terminal or from within VS Code.
 
-Note that you *cannot* just copy the server certificate you created with `keytool` to the client. That is a private file to the server only, and should not be given to clients or anyone not authorized to access that certificate.
+> Note that you *cannot* just copy the server certificate you created with `keytool` to the client. That is a private file of the server only, and **must not** be given to clients or anyone not authorized to access that certificate.
 
 ## Startup parameter and configuring the client
 
@@ -143,7 +141,7 @@ or in *nix machines:
 java -jar target/ChatClient-0.0.1-SNAPSHOT-jar-with-dependencies.jar chatclient.properties
 ```
 
-If server indicates an error for the request (success code is not 2xx), this client expects that the response body has a simple string describing what went wrong in the server. Client tries to read and display those to the user. If your server does not do this and there is no response body, an exception happens and is reported, but client should not crash.
+If server response indicates an error for the request (success code is not 2xx), this client expects that the response body has a simple string describing what went wrong in the server. Client tries to read and display those to the user. If your server does not do this (there is no response body), an exception happens and is reported, but client should not crash.
 
 ## Running the client from VS Code
 
@@ -151,7 +149,9 @@ If debugging from VS Code, you still need to give the parameteres to the client 
 **Startup parameter...**. How to do that in VS Code? If you don't have launch configuration file
 `launch.json` already, add a launch configuration to the project. If you don't know how, [take a look at this manual](https://code.visualstudio.com/docs/editor/debugging#_launch-configurations).  
 
-Make sure you edit the red underlined `args` configuration in the `launch.json`, seen in the image below, so that the arguments has the path and file name of the `chatclient.properties` file
+Make sure you edit the `args` configuration in the `launch.json`, seen in the image below in line 26, so that the arguments has the path and file name of the `chatclient.properties` file:
+
+![VS Code launch.json startup parameter](launch-config-json.png)
 
 Then when you launch the client (Run or Debug), use the "Launch ChatClient" launch configuration as you can see selected in the
 upper left corner of the image below (red underlining). That contains the launch configuration with startup parameters.
@@ -186,6 +186,6 @@ For instructions on how to execute the unit tests, see [TESTS-README.md](TESTS-R
 
 ## More information
 
-* (c) Antti Juustila 2020-2021, All rights reserved.
+* (c) Antti Juustila 2020-2022, All rights reserved.
 * MIT License (see LICENSE)
 * INTERACT Research Unit, University of Oulu, Finland
