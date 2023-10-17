@@ -108,9 +108,9 @@ public class ChatUnitTestSettings {
         @Override
         public String getServer() {
             if (clientSideCertificate != null) {
-                return "https://localhost:10001/";
+                return "https://localhost:10000/";
             } else {
-                return "http://localhost:10001/";
+                return "http://localhost:10000/";
             }
         }
 

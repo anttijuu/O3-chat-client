@@ -78,7 +78,7 @@ public class ChatHttpServerTests implements ChatClientDataProvider {
         try {
             assertEquals(200, httpClient.registerUser());
 		} catch (Exception e) {
-			fail("Exception in registering a user");
+			fail("Exception in registering a user: " + e.getMessage());
 		}
     }
 
